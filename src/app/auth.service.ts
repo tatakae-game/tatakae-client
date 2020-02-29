@@ -12,6 +12,24 @@ import { ApiResponse } from './api-response';
 export class AuthService {
   constructor(private http: HttpClient) { }
 
+  async isLogged() {
+    const token = localStorage.getItem('token')
+
+    if (!token) return false;
+
+    try {
+      const res = await this.http.post<ApiResponse>(`${config.api_url}/auth/check`, { token }).toPromise()
+      return res.valid;
+    } catch {
+      return false;
+    }
+  }
+
+  async isNotLogged() {
+    const logged = await this.isLogged();
+    return !logged;
+  }
+
   login(username: string, password: string) {
     return this.http.post<ApiResponse>(`${config.api_url}/auth/login`, { username, password })
       .pipe(map(res => {
