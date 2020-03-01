@@ -37,7 +37,7 @@ export class SignupComponent implements OnInit {
       res => {
         console.log(res);
         if (res?.success) {
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         } else if (res?.errors) {
           console.log(res.errors)
         }
