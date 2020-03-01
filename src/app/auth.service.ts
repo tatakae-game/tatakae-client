@@ -42,14 +42,7 @@ export class AuthService {
   }
 
   signup(username: string, email: string, password: string) {
-    return this.http.post<ApiResponse>(`${config.api_url}/auth/register`, { username, email, password })
-      .pipe(map(res => {
-        if (res?.success) {
-          localStorage.setItem('token', res.token);
-        }
-
-        return res;
-      }));
+    return this.http.post<ApiResponse>(`${config.api_url}/auth/register`, { username, email, password }).pipe(res => res);
   }
 
   logout() {
