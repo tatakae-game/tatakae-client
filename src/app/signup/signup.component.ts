@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 
 import { ValidateUsername, ValidateEmail, ValidatePassword } from '../validators/user.validator';
 import { AuthService } from '../auth.service';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-signup',
@@ -15,7 +16,12 @@ import { AuthService } from '../auth.service';
 export class SignupComponent implements OnInit {
   signUpForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private authService: AuthService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private notifierService: NotifierService
+  ) {
     this.signUpForm = this.formBuilder.group({
       username: ['', [Validators.required, ValidateUsername]],
       email: ['', [Validators.required, ValidateEmail]],
@@ -32,18 +38,19 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit(data: any): void {
-    console.log(data)
     this.authService.signup(data.username, data.email, data.password).pipe(first()).subscribe(
       res => {
-        console.log(res);
         if (res?.success) {
+          this.notifierService.notify('success', 'Account created with success. You can now login.');
           this.router.navigate(['/login']);
         } else if (res?.errors) {
-          console.log(res.errors)
+          res.errors.forEach((err) => {
+            this.notifierService.notify('error', err);
+          });
         }
       },
       error => {
-        console.log(error)
+        this.notifierService.notify('error', error);
       }
     );
   }
