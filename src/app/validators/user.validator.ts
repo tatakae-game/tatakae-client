@@ -2,7 +2,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import * as XRegExp from 'xregexp'
 
 export function ValidateUsername(control: AbstractControl): ValidationErrors | null {
-  const usernameRegExp = XRegExp('^[\\p{L}0-9_]{3,20}$');
+  const usernameRegExp = XRegExp('^[\\p{L}0-9_]{2,20}$');
 
   if (!usernameRegExp.test(control.value)) {
     return { validUsername: true };
