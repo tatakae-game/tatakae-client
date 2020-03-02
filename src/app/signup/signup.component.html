@@ -6,6 +6,9 @@
             <label for="username">Username</label>
             <input id="username" type="text" formControlName="username" required>
         </div>
+        <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error-message">
+            Use at least 5 characters with letters, numbers or underscores.
+        </div>
         <div class="form-entry">
             <label for="email">Email</label>
             <input id="email" type="email" formControlName="email" required>
