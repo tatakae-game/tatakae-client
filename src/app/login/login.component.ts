@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 import { AuthService } from '../auth.service';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,12 @@ import { AuthService } from '../auth.service';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private authService: AuthService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private notifierService: NotifierService
+  ) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -31,11 +37,13 @@ export class LoginComponent implements OnInit {
         if (res?.success) {
           this.router.navigate(['/']);
         } else if (res?.errors) {
-          console.log(res.errors)
+          res.errors.forEach((err) => {
+            this.notifierService.notify('error', err);
+          });
         }
       },
       error => {
-        console.log(error)
+        this.notifierService.notify('error', error);
       }
     );
   }
