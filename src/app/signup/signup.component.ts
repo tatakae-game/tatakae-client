@@ -41,7 +41,7 @@ export class SignupComponent implements OnInit {
     this.authService.signup(data.username, data.email, data.password).pipe(first()).subscribe(
       res => {
         if (res?.success) {
-          this.notifierService.notify('success', 'Account created with success. You can now login.');
+          this.notifierService.notify('success', 'Account successfully created. You can now enter your credentials.');
           this.router.navigate(['/login']);
         } else if (res?.errors) {
           res.errors.forEach((err) => {
