@@ -1,4 +1,5 @@
 @import "~normalize.css";
+@import "~angular-notifier/styles/";
 
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
 
@@ -108,4 +109,33 @@ a {
   &:hover {
     color: #ca792b;
   }
+}
+
+.notifier__notification--warning {
+  background-color: #ca792b;
+  background: -webkit-linear-gradient(135deg, #e48c3b, #b16014);
+  // background: -webkit-linear-gradient(135deg, #ca792b, #811d17);
+  background: linear-gradient(135deg, #e48c3b, #b16014);
+  color: #fff;
+}
+
+.notifier__notification--error {
+  background-color: #d9534f;
+  background: -webkit-linear-gradient(to right, #c41f32, #771f15);
+  background: linear-gradient(to right, #c41f32, #771f15);
+  color: #fff;
+}
+
+.notifier__notification--success {
+  background-color: #5cb85c;
+  background: -webkit-linear-gradient(135deg, #76ca27, #469222);
+  background: linear-gradient(135deg, #76ca27, #469222);
+  color: #fff;
+}
+
+.notifier__notification--info {
+  background-color: #5bc0de;
+  background: -webkit-linear-gradient(135deg, #5bc0de, #2277e6);
+  background: linear-gradient(135deg, #5bc0de, #2277e6);
+  color: #fff;
 }
