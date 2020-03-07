@@ -38,12 +38,12 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/']);
         } else if (res?.errors) {
           res.errors.forEach((err) => {
-            this.notifierService.notify('error', err);
+           this.notifierService.notify('error', err);
           });
         }
       },
       error => {
-        this.notifierService.notify('error', error);
+        this.notifierService.notify('error', 'An error occurred while trying to reach the server.');
       }
     );
   }
