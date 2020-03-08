@@ -3,17 +3,19 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NotifierModule } from 'angular-notifier';
+import { CommonModule } from '@angular/common';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { EditorComponent } from './editor/editor.component';
+import { EditorComponent } from './views/editor/editor.component';
 import { GameComponent } from './game/game.component';
 import { HeaderComponent } from './header/header.component';
-import { SignupComponent } from './signup/signup.component';
-import { LoginComponent } from './login/login.component';
+import { SignupComponent } from './views/signup/signup.component';
+import { LoginComponent } from './views/login/login.component';
+import { HomeComponent } from './views/home/home.component';
 
 import { AuthInterceptor } from './auth.interceptor';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -27,8 +29,10 @@ import { NotFoundComponent } from './not-found/not-found.component';
     SignupComponent,
     LoginComponent,
     NotFoundComponent,
+    HomeComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
