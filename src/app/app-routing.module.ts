@@ -4,10 +4,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { NoAuthGuard } from './no-auth.guard';
 import { AuthGuard } from './auth.guard';
 
-import { EditorComponent } from './editor/editor.component';
-import { SignupComponent } from './signup/signup.component';
-import { LoginComponent } from './login/login.component';
-import { NotFoundComponent } from './not-found/not-found.component';
+import { EditorComponent } from './views/editor/editor.component';
+import { SignupComponent } from './views/signup/signup.component';
+import { LoginComponent } from './views/login/login.component';
+import { NotFoundComponent } from './views/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/editor', },
