@@ -1,7 +1,8 @@
 @import "~normalize.css";
 @import "~angular-notifier/styles/";
 
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Rubik&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Karla&display=swap");
 
 @mixin remove-default-appearance {
   -webkit-appearance: none;
@@ -35,15 +36,30 @@ html {
 }
 
 body {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: "Karla", sans-serif;
 
   height: 100%;
 
-  color: #f1f1f1;
+  color: #e4e4e4;
 
   background: #0a041c;
   background: -webkit-linear-gradient(135deg, #0a041c, #110939, #1b0a42);
   background: linear-gradient(135deg, #0a041c, #110939, #1b0a42);
+
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Rubik", sans-serif;
+}
+
+p {
+  color: #d6d6d6;
 }
 
 img {
@@ -77,9 +93,12 @@ img {
   }
 }
 
-button {
+button,
+.button {
   @include remove-default-appearance;
   @include material-box-shadow;
+
+  display: inline-block;
 
   background: #ca792b;
   background: -webkit-linear-gradient(135deg, #ca792b, #811d17);
@@ -100,14 +119,17 @@ button {
 
 a {
   @include remove-default-appearance;
+  text-decoration: none;
 
-  text-decoration: underline;
-  color: #dfdfdf;
-  
-  transition: all .2s;
+  &:not(.button) {
+    text-decoration: underline;
+    color: #dfdfdf;
 
-  &:hover {
-    color: #ca792b;
+    transition: all 0.2s;
+
+    &:hover {
+      color: #ca792b;
+    }
   }
 }
 
@@ -137,4 +159,10 @@ a {
   background: -webkit-linear-gradient(135deg, #5bc0de, #2277e6);
   background: linear-gradient(135deg, #5bc0de, #2277e6);
   color: #fff;
+}
+
+.notifier__container {
+  ul {
+    margin: 0;
+  }
 }
