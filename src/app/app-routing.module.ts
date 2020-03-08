@@ -7,7 +7,7 @@ import { AuthGuard } from './auth.guard';
 import { EditorComponent } from './views/editor/editor.component';
 import { SignupComponent } from './views/signup/signup.component';
 import { LoginComponent } from './views/login/login.component';
-import { NotFoundComponent } from './not-found/not-found.component';
+import { NotFoundComponent } from './views/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/editor', },

@@ -16,7 +16,7 @@ import { SignupComponent } from './views/signup/signup.component';
 import { LoginComponent } from './views/login/login.component';
 
 import { AuthInterceptor } from './auth.interceptor';
-import { NotFoundComponent } from './not-found/not-found.component';
+import { NotFoundComponent } from './views/not-found/not-found.component';
 
 @NgModule({
   declarations: [
