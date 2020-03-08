@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { first } from 'rxjs/operators';
 
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../auth.service';
 import { NotifierService } from 'angular-notifier';
 
 @Component({

@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 
 import { first } from 'rxjs/operators';
 
-import { ValidateUsername, ValidateEmail, ValidatePassword } from '../validators/user.validator';
-import { AuthService } from '../auth.service';
+import { ValidateUsername, ValidateEmail, ValidatePassword } from '../../validators/user.validator';
+import { AuthService } from '../../auth.service';
 import { NotifierService } from 'angular-notifier';
 
 @Component({
