@@ -9,11 +9,11 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { EditorComponent } from './editor/editor.component';
+import { EditorComponent } from './views/editor/editor.component';
 import { GameComponent } from './game/game.component';
 import { HeaderComponent } from './header/header.component';
-import { SignupComponent } from './signup/signup.component';
-import { LoginComponent } from './login/login.component';
+import { SignupComponent } from './views/signup/signup.component';
+import { LoginComponent } from './views/login/login.component';
 
 import { AuthInterceptor } from './auth.interceptor';
 import { NotFoundComponent } from './not-found/not-found.component';
