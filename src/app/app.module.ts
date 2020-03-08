@@ -7,6 +7,8 @@ import { NotifierModule } from 'angular-notifier';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
+import { AuthInterceptor } from './auth.interceptor';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EditorComponent } from './views/editor/editor.component';
@@ -15,7 +17,6 @@ import { HeaderComponent } from './header/header.component';
 import { SignupComponent } from './views/signup/signup.component';
 import { LoginComponent } from './views/login/login.component';
 
-import { AuthInterceptor } from './auth.interceptor';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 
 @NgModule({
