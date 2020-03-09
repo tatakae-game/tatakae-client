@@ -12,6 +12,9 @@
                 <a [ngClass]="router.url === '/support' ? 'active' : ''" routerLink="/support">Support</a>
             </li>
             <li>
+              <a [ngClass]="router.url === '/game' ? 'active' : ''" routerLink="/game">Play</a>
+            </li>
+            <li>
                 <a class="logout" (click)="logout()">Logout</a>
             </li>
         </ul>
