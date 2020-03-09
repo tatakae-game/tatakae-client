@@ -19,6 +19,8 @@ import { LoginComponent } from './views/login/login.component';
 
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { HomeComponent } from './views/home/home.component';
+import { ChatComponent } from './views/chat/chat.component';
+import { UserControlComponent } from './user-control/user-control.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,8 @@ import { HomeComponent } from './views/home/home.component';
     LoginComponent,
     NotFoundComponent,
     HomeComponent,
+    ChatComponent,
+    UserControlComponent,
   ],
   imports: [
     BrowserModule,

@@ -3,10 +3,16 @@
     <nav>
         <ul>
             <li>
-                <a routerLink="/editor">Editor</a>
+                <a [ngClass]="router.url === '/editor' ? 'active' : ''" routerLink="/editor">Editor</a>
             </li>
             <li>
-                <a (click)="logout()">Logout</a>
+                <a [ngClass]="router.url === '/chat' ? 'active' : ''" routerLink="/chat">Chat</a>
+            </li>
+            <li>
+                <a [ngClass]="router.url === '/support' ? 'active' : ''" routerLink="/support">Support</a>
+            </li>
+            <li>
+                <a class="logout" (click)="logout()">Logout</a>
             </li>
         </ul>
     </nav>
