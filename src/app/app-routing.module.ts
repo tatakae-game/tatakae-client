@@ -12,7 +12,7 @@ import { NotFoundComponent } from './views/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [NoAuthGuard], },
-  { path: '', pathMatch: 'full', redirectTo: '/login', },
+  { path: '', pathMatch: 'full', redirectTo: '/editor', },
   { path: 'editor', component: EditorComponent, canActivate: [AuthGuard], },
   { path: 'signup', component: SignupComponent, canActivate: [NoAuthGuard], },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard], },
