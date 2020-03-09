@@ -21,6 +21,7 @@ import { NotFoundComponent } from './views/not-found/not-found.component';
 import { HomeComponent } from './views/home/home.component';
 import { ChatComponent } from './views/chat/chat.component';
 import { UserControlComponent } from './user-control/user-control.component';
+import { PlayComponent } from './views/play/play.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { UserControlComponent } from './user-control/user-control.component';
     HomeComponent,
     ChatComponent,
     UserControlComponent,
+    PlayComponent,
   ],
   imports: [
     BrowserModule,
