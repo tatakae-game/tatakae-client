@@ -6,6 +6,7 @@ import { NotifierModule } from 'angular-notifier';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { TooltipModule } from 'ng2-tooltip-directive';
 
 import { AuthInterceptor } from './auth.interceptor';
 
@@ -42,6 +43,7 @@ import { UserControlComponent } from './user-control/user-control.component';
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
+    TooltipModule,
     MonacoEditorModule.forRoot(),
     NotifierModule.withConfig({
       position: {

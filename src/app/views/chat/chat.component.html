@@ -1,4 +1,23 @@
-<app-user-control>
+<app-user-control padding="false">
   <app-header></app-header>
-  <main></main>
+  <main>
+    <div class="chat-messages">
+      <div *ngFor="let message of messages"
+        class="chat-message {{ message.author === session.user.id ? 'chat-message-by-author' : '' }}">
+        <div tooltip="{{ sanitizeDate(message.date) }}" placement="left" show-delay="0">
+          <div *ngIf="message.author !== session.user.id" class="chat-message-author">A random person</div>
+          <div *ngIf="message.type == 'text'">{{message.data}}</div>
+        </div>
+      </div>
+    </div>
+    <form class="form-entry chat-input-form">
+      <button type="button">
+        <fa-icon [icon]="imageIcon"></fa-icon>
+      </button>
+      <input type="text">
+      <button type="submit">
+        <fa-icon [icon]="sendIcon"></fa-icon>
+      </button>
+    </form>
+  </main>
 </app-user-control>
