@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 
 import config from './config';
 import { ApiResponse } from './api-response';
+import { Session } from './models/session.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,12 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   async isLogged() {
-    const token = localStorage.getItem('token')
+    const session = this.session()
 
-    if (!token) return false;
+    if (!session?.token) return false;
 
     try {
-      const res = await this.http.post<ApiResponse>(`${config.api_url}/auth/check`, { token }).toPromise()
+      const res = await this.http.post<ApiResponse>(`${config.api_url}/auth/check`, { token: session.token }).toPromise()
       return res.valid;
     } catch {
       return false;
@@ -34,7 +35,12 @@ export class AuthService {
     return this.http.post<ApiResponse>(`${config.api_url}/auth/login`, { username, password })
       .pipe(map(res => {
         if (res?.success) {
-          localStorage.setItem('token', res.token);
+          const session = JSON.stringify({
+            token: res.token,
+            user: res.user,
+          });
+
+          localStorage.setItem('session', btoa(session));
         }
 
         return res;
@@ -46,6 +52,16 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('session');
+  }
+
+  session(): Session {
+    const session = localStorage.getItem('session')
+
+    if (!session) {
+      return null;
+    }
+
+    return JSON.parse(atob(session))
   }
 }
