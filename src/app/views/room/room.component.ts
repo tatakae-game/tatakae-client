@@ -7,22 +7,27 @@ import { Message } from 'src/app/models/message.model';
 import { Session } from 'src/app/models/session.model';
 
 import { faImages, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-chat',
-  templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  selector: 'app-room',
+  templateUrl: './room.component.html',
+  styleUrls: ['./room.component.scss']
 })
-export class ChatComponent implements OnInit {
+export class RoomComponent implements OnInit {
   public session: Session;
+  public socket: SocketIOClient.Socket;
+
   public messages: Message[] = [];
 
   imageIcon = faImages;
   sendIcon = faPlay;
 
-  constructor(private wsService: WsService, private authService: AuthService) { }
+  constructor(private wsService: WsService, private authService: AuthService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+
     this.session = this.authService.session();
 
     this.messages.push({
@@ -41,18 +46,20 @@ export class ChatComponent implements OnInit {
       date: new Date(),
     })
 
-    const socket = this.wsService.connect(true)
-
-    console.log('Starting socket server...')
-    socket.on('connect', () => {
-      console.log('connected')
-
-      socket.emit('matchmaking')
+    this.socket = this.wsService.connect(`/chat`, {
+      room: id,
     });
-    socket.on('matchmaking info', console.log);
-    socket.on('disconnect', () => console.log('disconnected'));
 
-    console.log(socket)
+    this.socket.on('disconnect', () => console.log('disconnected'));
+  }
+
+  onSubmit() {
+    if (this.socket.connected) {
+      this.socket.emit('message', {
+        type: 'text',
+        data: 'Hello my friend!',
+      });
+    }
   }
 
   sanitizeDate(date: Date): string {
@@ -61,7 +68,7 @@ export class ChatComponent implements OnInit {
 
     const time = `${hours}:${minutes}`;
 
-     {
+    {
       const day = `${date.getDate().toString().padStart(2, '0')}`;
       const month = `${(date.getMonth() + 1).toString().padStart(2, '0')}`;
       const year = `${date.getFullYear().toString().padStart(2, '0')}`;

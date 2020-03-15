@@ -20,7 +20,7 @@ import { LoginComponent } from './views/login/login.component';
 
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { HomeComponent } from './views/home/home.component';
-import { ChatComponent } from './views/chat/chat.component';
+import { RoomComponent } from './views/room/room.component';
 import { UserControlComponent } from './user-control/user-control.component';
 
 @NgModule({
@@ -33,7 +33,7 @@ import { UserControlComponent } from './user-control/user-control.component';
     LoginComponent,
     NotFoundComponent,
     HomeComponent,
-    ChatComponent,
+    RoomComponent,
     UserControlComponent,
   ],
   imports: [
