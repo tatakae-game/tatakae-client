@@ -6,4 +6,5 @@ export interface ApiResponse {
     errors: string[];
     token: string;
     user: User;
+    profile: User;
 }

@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import config from './config';
 import { ApiResponse } from './api-response';
 import { Session } from './models/session.model';
+import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -31,20 +32,25 @@ export class AuthService {
     return !logged;
   }
 
-  login(username: string, password: string) {
-    return this.http.post<ApiResponse>(`${config.api_url}/auth/login`, { username, password })
-      .pipe(map(res => {
-        if (res?.success) {
-          const session = JSON.stringify({
-            token: res.token,
-            user: res.user,
-          });
+  async login(username: string, password: string): Promise<ApiResponse> {
+    const login = await this.http.post<ApiResponse>(`${config.api_url}/auth/login`, { username, password }).toPromise();
 
-          localStorage.setItem('session', btoa(session));
-        }
+    if (login?.success) {
+      const me = await this.http.get<ApiResponse>(`${config.api_url}/users/me?token=${login.token}`).toPromise();
 
-        return res;
-      }));
+      if (me?.success) {
+        const session = JSON.stringify({
+          token: login.token,
+          user: me.profile,
+        });
+
+        localStorage.setItem('session', btoa(session));
+      }
+
+      return me;
+    }
+
+    return login;
   }
 
   signup(username: string, email: string, password: string) {

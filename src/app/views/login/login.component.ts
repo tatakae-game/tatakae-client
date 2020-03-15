@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 
 import { AuthService } from '../../auth.service';
 import { NotifierService } from 'angular-notifier';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -32,13 +33,13 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(data: any): void {
-    this.authService.login(data.username, data.password).pipe(first()).subscribe(
+    from(this.authService.login(data.username, data.password)).pipe(first()).subscribe(
       res => {
         if (res?.success) {
-          this.router.navigate(['/']);
+          this.router.navigate(['/editor']);
         } else if (res?.errors) {
           res.errors.forEach((err) => {
-           this.notifierService.notify('error', err);
+            this.notifierService.notify('error', err);
           });
         }
       },
