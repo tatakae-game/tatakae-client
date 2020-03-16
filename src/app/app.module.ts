@@ -22,6 +22,7 @@ import { NotFoundComponent } from './views/not-found/not-found.component';
 import { HomeComponent } from './views/home/home.component';
 import { RoomComponent } from './views/room/room.component';
 import { UserControlComponent } from './user-control/user-control.component';
+import { RoomsComponent } from './views/rooms/rooms.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { UserControlComponent } from './user-control/user-control.component';
     HomeComponent,
     RoomComponent,
     UserControlComponent,
+    RoomsComponent,
   ],
   imports: [
     BrowserModule,

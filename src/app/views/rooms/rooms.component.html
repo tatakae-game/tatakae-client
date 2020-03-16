@@ -1,0 +1,9 @@
+<app-user-control>
+    <app-header></app-header>
+    <main>
+        <a *ngFor="let room of rooms" routerLink="/chat/room/{{ room.id }}" class="chat-room no-style">
+            <div class="chat-room-name">{{ room.name }}</div>
+            <div>{{ room.users.length + 1 }} users</div>
+        </a>
+    </main>
+</app-user-control>
