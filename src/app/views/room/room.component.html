@@ -1,23 +1,41 @@
 <app-user-control padding="false">
   <app-header></app-header>
   <main>
-    <div class="chat-messages">
+    <div #chat class="chat-messages">
       <div *ngFor="let message of messages"
         class="chat-message {{ message.author === session.user.id ? 'chat-message-by-author' : '' }}">
-        <div tooltip="{{ sanitizeDate(message.date) }}" placement="left" show-delay="0">
-          <div *ngIf="message.author !== session.user.id" class="chat-message-author">A random person</div>
+        <div tooltip="{{ sanitizeDate(message.date) }}"
+          placement="{{ message.author === session.user.id ? 'left' : 'right' }}" show-delay="0">
+          <div *ngIf="message.author !== session.user.id" class="chat-message-author">
+            {{ getUsername(message.author) }}
+          </div>
           <div *ngIf="message.type == 'text'">{{message.data}}</div>
         </div>
       </div>
     </div>
-    <form class="form-entry chat-input-form">
+    <form class="form-entry chat-input-form" [formGroup]="messageForm" (ngSubmit)="onMessageSubmit(messageForm.value)">
       <button type="button">
         <fa-icon [icon]="imageIcon"></fa-icon>
       </button>
-      <input type="text">
-      <button type="submit">
+      <input type="text" formControlName="message" required>
+      <button type="submit" [disabled]="!messageForm.valid">
         <fa-icon [icon]="sendIcon"></fa-icon>
       </button>
     </form>
   </main>
+  <div class="chat-users-list">
+    <div class="chat-users-list-name">{{ room?.name }}</div>
+    <form class="form-entry chat-input-form chat-invite-form" [formGroup]="inviteForm" (ngSubmit)="onInviteSubmit(inviteForm.value)">
+      <input list="users" formControlName="user" required (input)="onInviteUserUpdate($event.target.value)">
+      <datalist id="users">
+        <option *ngFor="let user of searchedUsers" value="{{ user.id }}">{{user.username}}</option>
+      </datalist>
+      <button type="submit">
+        <fa-icon [icon]="inviteIcon"></fa-icon>
+      </button>
+    </form>
+    <div *ngFor="let user of users" class="chat-users-list-users">
+      {{ user.username }}
+    </div>
+  </div>
 </app-user-control>

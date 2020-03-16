@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit } from '@angular/core';
 
 import { WsService } from 'src/app/ws.service';
 import { AuthService } from 'src/app/auth.service';
@@ -6,15 +6,24 @@ import { AuthService } from 'src/app/auth.service';
 import { Message } from 'src/app/models/message.model';
 import { Session } from 'src/app/models/session.model';
 
-import { faImages, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faImages, faPlay, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute } from '@angular/router';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
+import { RoomsService } from 'src/app/rooms.service';
+import { UsersService } from 'src/app/services/users.service';
+
+import { Room } from 'src/app/models/room.model';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, AfterViewInit {
+  @ViewChild('chat') public chatContainer: ElementRef;
+
   public session: Session;
   public socket: SocketIOClient.Socket;
 
@@ -22,44 +31,88 @@ export class RoomComponent implements OnInit {
 
   imageIcon = faImages;
   sendIcon = faPlay;
+  inviteIcon = faUserPlus;
 
-  constructor(private wsService: WsService, private authService: AuthService, private route: ActivatedRoute) { }
+  messageForm: FormGroup;
+  inviteForm: FormGroup;
 
-  ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+  room: Room;
+  users: User[] = [];
 
+  searchedUsers: User[] = [];
+
+  constructor(
+    private wsService: WsService,
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
+    private roomsService: RoomsService,
+    private usersService: UsersService,
+  ) {
+    this.messageForm = this.formBuilder.group({
+      message: ['', Validators.required],
+    });
+
+    this.inviteForm = this.formBuilder.group({
+      user: ['', Validators.required],
+    });
+  }
+
+  async ngOnInit() {
     this.session = this.authService.session();
-
-    this.messages.push({
-      id: '0',
-      author: '87afbc09bbf6c721a92c0ffb',
-      type: 'text',
-      data: "Welcome to Tatakae's chat",
-      date: new Date(),
-    })
-
-    this.messages.push({
-      id: '1',
-      author: this.session.user.id,
-      type: 'text',
-      data: "Oh! That's beautiful!",
-      date: new Date(),
-    })
+    const id = this.route.snapshot.paramMap.get('id');
 
     this.socket = this.wsService.connect(`/chat`, {
       room: id,
     });
 
+    this.room = await this.roomsService.getRoom(id);
+    const messages = this.room.messages.map(message => ({
+      ...message,
+      date: new Date(message.date),
+    }));
+
+    this.messages.push(...messages);
+
+    this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
+
+    this.socket.on('new message', (data: Message) => {
+      data.date = new Date(data.date);
+      this.messages.push(data);
+
+      this.scrollToBottom()
+    });
+
     this.socket.on('disconnect', () => console.log('disconnected'));
   }
 
-  onSubmit() {
+  ngAfterViewInit() { }
+
+  scrollToBottom() {
+    this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+  }
+
+  onMessageSubmit(data: any): void {
     if (this.socket.connected) {
       this.socket.emit('message', {
         type: 'text',
-        data: 'Hello my friend!',
+        data: data.message,
+        author: this.session.user.id,
       });
+      this.messageForm.patchValue({
+        message: '',
+      })
     }
+  }
+
+  async onInviteSubmit(data: any) {
+    const res = await this.roomsService.addUser(this.room.id, data.user)
+    console.log(res)
+  }
+
+  async onInviteUserUpdate(value: string) {
+    const users = await this.usersService.searchUsers(value);
+    this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
   }
 
   sanitizeDate(date: Date): string {
@@ -75,5 +128,9 @@ export class RoomComponent implements OnInit {
 
       return `${day}/${month}/${year} at ${time}`
     }
+  }
+
+  getUsername(id: string) {
+    return this.users.find(user => user.id === id)?.username
   }
 }
