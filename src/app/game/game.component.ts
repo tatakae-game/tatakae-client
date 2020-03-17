@@ -151,10 +151,7 @@ export class GameComponent implements OnInit {
     container.pivot.y = 0;
   }
 
-  /**
-   * @param {TileSettings} tile_settings 
-   */
-  generateSprite(tile_settings) {
+  generateSprite(tile_settings: TileSettings) {
     if (tile_settings.textures) {
       const alternatives = tile_settings.textures[Math.floor(Math.random() * tile_settings.textures.length)];
       const textures = alternatives.map(path => {
