@@ -5,11 +5,12 @@ interface Tilemap {
   tiles: string[];
 }
 
-interface Terrain {
-  width: number;
-  height: number;
+class Terrain {
+  constructor(public width: number, public height: number, public tilemaps: Tilemap[] = []) { }
 
-  tilemaps: Tilemap[];
+  get(tilemap: Tilemap, x: number, y: number) {
+    return tilemap.tiles[x + (y * this.width)];
+  }
 }
 
 @Component({
@@ -19,37 +20,32 @@ interface Terrain {
 export class GameComponent implements OnInit {
   public app: PIXI.Application;
 
-  public terrain: Terrain = {
-    width: 8,
-    height: 8,
-
-    tilemaps: [
-      {
-        tiles: [
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-          'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        ],
-      },
-      {
-        tiles: [
-          'tree', null, null, null, 'tree', null, null, null,
-          null, null, null, null, null, null, null, null,
-          null, null, null, 'tree', null, null, null, null,
-          null, null, null, null, null, null, null, null,
-          null, 'tree', null, null, null, null, null, null,
-          null, null, null, null, null, 'tree', null, null,
-          null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null,
-        ],
-      },
-    ],
-  };
+  public terrain = new Terrain(8, 8, [
+    {
+      tiles: [
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+      ],
+    },
+    {
+      tiles: [
+        'tree', null, null, null, 'tree', null, null, null,
+        null, null, null, null, null, null, null, null,
+        null, null, null, 'tree', null, null, null, null,
+        null, null, null, null, null, null, null, null,
+        null, 'tree', null, null, null, null, null, null,
+        null, null, null, null, null, 'tree', null, null,
+        null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null,
+      ],
+    },
+  ]);
 
   public canvas_size = 512;
 
@@ -95,7 +91,7 @@ export class GameComponent implements OnInit {
 
     for (let y = 0; y < this.terrain.height; y++) {
       for (let x = 0; x < this.terrain.width; x++) {
-        const tile = tilemap.tiles[(y * this.terrain.width) + x];
+        const tile = this.terrain.get(tilemap, x, y);
 
         if (!tile) continue;
 
