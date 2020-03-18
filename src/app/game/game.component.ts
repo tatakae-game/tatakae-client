@@ -1,26 +1,43 @@
 import { Component, OnInit, ElementRef, NgZone } from '@angular/core';
 import * as PIXI from 'pixi.js';
 
+enum TileType {
+  Floor,
+  BlockingObstacle,
+}
+
+interface TileTexture {
+  speed?: number;
+  frames: string[];
+}
+
 interface TileSettings {
-  texture?: string[];
-  textures?: string[][];
+  type: TileType,
+  textures?: TileTexture[];
 }
 
 const TILES: { [key: string]: TileSettings } = {
   'grass': {
-    texture: [
-      '/assets/tiles/grass.png',
+    type: TileType.Floor,
+    textures: [
+      {
+        frames: ['/assets/tiles/grass.png'],
+      },
     ],
   },
   'tree': {
+    type: TileType.BlockingObstacle,
     textures: [
-      [
-        '/assets/tiles/tree/tree1.png',
-        '/assets/tiles/tree/tree2.png',
-        '/assets/tiles/tree/tree3.png',
-        '/assets/tiles/tree/tree4.png',
-        '/assets/tiles/tree/tree5.png',
-      ],
+      {
+        speed: 0.05,
+        frames: [
+          '/assets/tiles/tree/tree1.png',
+          '/assets/tiles/tree/tree2.png',
+          '/assets/tiles/tree/tree3.png',
+          '/assets/tiles/tree/tree4.png',
+          '/assets/tiles/tree/tree5.png',
+        ],
+      }
     ],
   },
 }
@@ -94,7 +111,9 @@ export class GameComponent implements OnInit {
         const tile_settings = TILES[tile];
 
         if (tile_settings) {
-          loader.add(tile_settings.textures || tile_settings.texture)
+          loader.add(tile_settings.textures.reduce((acc, textures) => {
+            return acc.concat(textures.frames)
+          }, []));
         }
       });
 
@@ -152,26 +171,20 @@ export class GameComponent implements OnInit {
   }
 
   generateSprite(tile_settings: TileSettings) {
-    if (tile_settings.textures) {
-      const alternatives = tile_settings.textures[Math.floor(Math.random() * tile_settings.textures.length)];
-      const textures = alternatives.map(path => {
-        const texture = PIXI.Texture.from(path);
-        texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
-        return texture
-      });
-
-      const sprite = new PIXI.AnimatedSprite(textures)
-      sprite.animationSpeed = 0.075;
-      sprite.play();
-
-      return sprite;
-    } else {
-      const alternative = tile_settings.texture[Math.floor(Math.random() * tile_settings.texture.length)];
-      const texture = PIXI.Texture.from(alternative);
+    const alternative = tile_settings.textures[Math.floor(Math.random() * tile_settings.textures.length)];
+    const textures = alternative.frames.map(path => {
+      const texture = PIXI.Texture.from(path);
       texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
-      return new PIXI.Sprite(texture)
-    }
+      return texture
+    });
+
+    const sprite = new PIXI.AnimatedSprite(textures)
+
+    console.log(this.app.ticker.FPS)
+    sprite.animationSpeed = isNaN(alternative.speed) ? 1 : alternative.speed;
+    sprite.play();
+
+    return sprite;
   }
 }
