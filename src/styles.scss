@@ -125,7 +125,11 @@ a {
   @include remove-default-appearance;
   text-decoration: none;
 
-  &:not(.button) {
+  &.no-style {
+    color: #dfdfdf;
+  }
+
+  &:not(.button):not(.no-style) {
     text-decoration: underline;
     color: #dfdfdf;
 

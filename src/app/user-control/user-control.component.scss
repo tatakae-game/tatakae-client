@@ -1,7 +1,8 @@
 .user-control {
   display: flex;
+  max-height: 100vh;
 
-  > main {
+  &:not(.no-padding) > main {
     padding: 32px;
   }
 }

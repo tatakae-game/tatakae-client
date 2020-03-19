@@ -6,6 +6,7 @@ import { NotifierModule } from 'angular-notifier';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { TooltipModule } from 'ng2-tooltip-directive';
 
 import { AuthInterceptor } from './auth.interceptor';
 
@@ -19,9 +20,9 @@ import { LoginComponent } from './views/login/login.component';
 
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { HomeComponent } from './views/home/home.component';
-import { ChatComponent } from './views/chat/chat.component';
+import { RoomComponent } from './views/room/room.component';
 import { UserControlComponent } from './user-control/user-control.component';
-import { PlayComponent } from './views/play/play.component';
+import { RoomsComponent } from './views/rooms/rooms.component';
 
 @NgModule({
   declarations: [
@@ -33,9 +34,9 @@ import { PlayComponent } from './views/play/play.component';
     LoginComponent,
     NotFoundComponent,
     HomeComponent,
-    ChatComponent,
+    RoomComponent,
     UserControlComponent,
-    PlayComponent,
+    RoomsComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,6 +45,7 @@ import { PlayComponent } from './views/play/play.component';
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
+    TooltipModule,
     MonacoEditorModule.forRoot(),
     NotifierModule.withConfig({
       position: {
