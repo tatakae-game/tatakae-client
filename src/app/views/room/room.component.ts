@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit } from '@angular/core';
 
 import { WsService } from 'src/app/ws.service';
 import { AuthService } from 'src/app/auth.service';
@@ -6,10 +6,13 @@ import { AuthService } from 'src/app/auth.service';
 import { Message } from 'src/app/models/message.model';
 import { Session } from 'src/app/models/session.model';
 
-import { faImages, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faImages, faPlay, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
 import { RoomsService } from 'src/app/rooms.service';
+import { UsersService } from 'src/app/services/users.service';
+
 import { Room } from 'src/app/models/room.model';
 import { User } from 'src/app/models/user.model';
 
@@ -18,7 +21,9 @@ import { User } from 'src/app/models/user.model';
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, AfterViewInit {
+  @ViewChild('chat') public chatContainer: ElementRef;
+
   public session: Session;
   public socket: SocketIOClient.Socket;
 
@@ -26,21 +31,30 @@ export class RoomComponent implements OnInit {
 
   imageIcon = faImages;
   sendIcon = faPlay;
+  inviteIcon = faUserPlus;
 
   messageForm: FormGroup;
+  inviteForm: FormGroup;
 
   room: Room;
-  usersInRoom: User[];
+  users: User[] = [];
+
+  searchedUsers: User[] = [];
 
   constructor(
     private wsService: WsService,
     private authService: AuthService,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private roomService: RoomsService,
+    private roomsService: RoomsService,
+    private usersService: UsersService,
   ) {
     this.messageForm = this.formBuilder.group({
       message: ['', Validators.required],
+    });
+
+    this.inviteForm = this.formBuilder.group({
+      user: ['', Validators.required],
     });
   }
 
@@ -52,21 +66,33 @@ export class RoomComponent implements OnInit {
       room: id,
     });
 
-    this.room = await this.roomService.getRoom(id);
-    this.messages.push(...this.room.messages);
+    this.room = await this.roomsService.getRoom(id);
+    const messages = this.room.messages.map(message => ({
+      ...message,
+      date: new Date(message.date),
+    }));
 
-    const users = await Promise.all(this.room.users.map(id => this.roomService.getUser(id)));
+    this.messages.push(...messages);
+
+    this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
 
     this.socket.on('new message', (data: Message) => {
       data.date = new Date(data.date);
-      data.author = this.session.user.username;
       this.messages.push(data);
-    })
+
+      this.scrollToBottom()
+    });
 
     this.socket.on('disconnect', () => console.log('disconnected'));
   }
 
-  onSubmit(data: any): void {
+  ngAfterViewInit() { }
+
+  scrollToBottom() {
+    this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+  }
+
+  onMessageSubmit(data: any): void {
     if (this.socket.connected) {
       this.socket.emit('message', {
         type: 'text',
@@ -77,6 +103,16 @@ export class RoomComponent implements OnInit {
         message: '',
       })
     }
+  }
+
+  async onInviteSubmit(data: any) {
+    const res = await this.roomsService.addUser(this.room.id, data.user)
+    console.log(res)
+  }
+
+  async onInviteUserUpdate(value: string) {
+    const users = await this.usersService.searchUsers(value);
+    this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
   }
 
   sanitizeDate(date: Date): string {
@@ -92,5 +128,9 @@ export class RoomComponent implements OnInit {
 
       return `${day}/${month}/${year} at ${time}`
     }
+  }
+
+  getUsername(id: string) {
+    return this.users.find(user => user.id === id)?.username
   }
 }

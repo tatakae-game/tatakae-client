@@ -41,12 +41,15 @@ export class RoomsService {
     }
   }
 
-  async getUser(id: string) {
+  async addUser(id: string, user_id: string) {
     try {
-      const res = await this.http.get<ApiResponse>(`${config.api_url}/users/${id}`).toPromise();
-      return res.profile
+      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms/${id}/invite`, {
+        user: user_id,
+      }).toPromise();
+
+      return true;
     } catch {
-      return null;
+      return false;
     }
   }
 }
