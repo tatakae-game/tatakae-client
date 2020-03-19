@@ -10,12 +10,14 @@ import { SignupComponent } from './views/signup/signup.component';
 import { LoginComponent } from './views/login/login.component';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { ChatComponent } from './views/chat/chat.component';
+import { PlayComponent } from './views/play/play.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [NoAuthGuard], },
   { path: '', pathMatch: 'full', redirectTo: '/editor', },
   { path: 'chat', component: ChatComponent, canActivate: [AuthGuard], },
   { path: 'editor', component: EditorComponent, canActivate: [AuthGuard], },
+  { path: 'play', component: PlayComponent, canActivate: [AuthGuard], },
   { path: 'signup', component: SignupComponent, canActivate: [NoAuthGuard], },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard], },
   { path: '**', component: NotFoundComponent, },
