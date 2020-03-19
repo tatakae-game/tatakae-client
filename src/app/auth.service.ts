@@ -19,6 +19,11 @@ export class AuthService {
 
     try {
       const res = await this.http.post<ApiResponse>(`${config.api_url}/auth/check`, { token }).toPromise()
+
+      if (!res.valid) {
+        this.logout();
+      }
+
       return res.valid;
     } catch {
       return false;
