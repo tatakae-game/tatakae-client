@@ -28,7 +28,25 @@ export class RoomsService {
       const res = await this.http.get<ApiResponse>(`${config.api_url}/chat/rooms/${id}`).toPromise();
       return res.room;
     } catch {
-      return {};
+      return null;
+    }
+  }
+
+  async getUsersInRoom(id: string) {
+    try {
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/chat/rooms/${id}/users`).toPromise();
+      return res.users || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async getUser(id: string) {
+    try {
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/users/${id}`).toPromise();
+      return res.profile
+    } catch {
+      return null;
     }
   }
 }

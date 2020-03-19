@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { RoomsService } from 'src/app/rooms.service';
 import { Room } from 'src/app/models/room.model';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-room',
@@ -28,6 +29,9 @@ export class RoomComponent implements OnInit {
 
   messageForm: FormGroup;
 
+  room: Room;
+  usersInRoom: User[];
+
   constructor(
     private wsService: WsService,
     private authService: AuthService,
@@ -40,7 +44,7 @@ export class RoomComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.session = this.authService.session();
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -48,15 +52,14 @@ export class RoomComponent implements OnInit {
       room: id,
     });
 
-    this.roomService.getRoom(id).then((res: Room) => {
-      this.messages.push(...res.messages);
-      this.messages.forEach(msg => {
-        msg.date = new Date(msg.date.toString());
-      });
-    });
+    this.room = await this.roomService.getRoom(id);
+    this.messages.push(...this.room.messages);
 
-    this.socket.on('new message', (data) => {
+    const users = await Promise.all(this.room.users.map(id => this.roomService.getUser(id)));
+
+    this.socket.on('new message', (data: Message) => {
       data.date = new Date(data.date);
+      data.author = this.session.user.username;
       this.messages.push(data);
     })
 

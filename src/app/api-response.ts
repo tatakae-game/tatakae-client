@@ -12,4 +12,5 @@ export interface ApiResponse {
     rooms: Room[];
     room: Room;
     messages: Message[];
+    users: User[];
 }
