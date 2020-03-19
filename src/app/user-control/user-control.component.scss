@@ -1,5 +1,6 @@
 .user-control {
   display: flex;
+  max-height: 100vh;
 
   &:not(.no-padding) > main {
     padding: 32px;
