@@ -5,17 +5,17 @@
       <div *ngFor="let message of messages"
         class="chat-message {{ message.author === session.user.id ? 'chat-message-by-author' : '' }}">
         <div tooltip="{{ sanitizeDate(message.date) }}" placement="left" show-delay="0">
-          <div *ngIf="message.author !== session.user.id" class="chat-message-author">A random person</div>
+          <div *ngIf="message.author !== session.user.id" class="chat-message-author"> {{message.author}} </div>
           <div *ngIf="message.type == 'text'">{{message.data}}</div>
         </div>
       </div>
     </div>
-    <form class="form-entry chat-input-form">
+    <form class="form-entry chat-input-form" [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm.value)">
       <button type="button">
         <fa-icon [icon]="imageIcon"></fa-icon>
       </button>
-      <input type="text">
-      <button type="submit">
+      <input type="text" formControlName="message" required>
+      <button type="submit" [disabled]="!messageForm.valid">
         <fa-icon [icon]="sendIcon"></fa-icon>
       </button>
     </form>
