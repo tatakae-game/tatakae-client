@@ -11,6 +11,7 @@ import { LoginComponent } from './views/login/login.component';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { RoomComponent } from './views/room/room.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
+import { PlayComponent } from './views/play/play.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [NoAuthGuard], },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'chat', component: RoomsComponent, canActivate: [AuthGuard], },
   { path: 'chat/room/:id', component: RoomComponent, canActivate: [AuthGuard], },
   { path: 'editor', component: EditorComponent, canActivate: [AuthGuard], },
+  { path: 'play', component: PlayComponent, canActivate: [AuthGuard], },
   { path: 'signup', component: SignupComponent, canActivate: [NoAuthGuard], },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard], },
   { path: '**', component: NotFoundComponent, },
