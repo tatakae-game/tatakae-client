@@ -4,8 +4,9 @@
     <div class="chat-messages">
       <div *ngFor="let message of messages"
         class="chat-message {{ message.author === session.user.id ? 'chat-message-by-author' : '' }}">
-        <div tooltip="{{ sanitizeDate(message.date) }}" placement="left" show-delay="0">
-          <div *ngIf="message.author !== session.user.id" class="chat-message-author"> {{message.author}} </div>
+        <div tooltip="{{ sanitizeDate(message.date) }}"
+          placement="{{ message.author === session.user.id ? 'left' : 'right' }}" show-delay="0">
+          <div *ngIf="message.author !== session.user.id" class="chat-message-author">{{message.author}}</div>
           <div *ngIf="message.type == 'text'">{{message.data}}</div>
         </div>
       </div>
