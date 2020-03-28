@@ -8,11 +8,12 @@ enum TileType {
 
 interface TileTexture {
   speed?: number;
+  randomize_angle?: boolean;
   frames: string[];
 }
 
 interface TileSettings {
-  type: TileType,
+  type: TileType;
   textures?: TileTexture[];
 }
 
@@ -21,7 +22,32 @@ const TILES: { [key: string]: TileSettings } = {
     type: TileType.Floor,
     textures: [
       {
-        frames: ['/assets/tiles/grass.png'],
+        randomize_angle: true,
+        frames: ['/assets/tiles/grass/grass.png'],
+      },
+    ],
+  },
+  'sand': {
+    type: TileType.Floor,
+    textures: [
+      {
+        frames: ['/assets/tiles/sand/sand.png'],
+      },
+    ],
+  },
+  'ruins': {
+    type: TileType.BlockingObstacle,
+    textures: [
+      {
+        frames: ['/assets/tiles/ruins/ruins.png'],
+      },
+    ],
+  },
+  'desert-mountain': {
+    type: TileType.BlockingObstacle,
+    textures: [
+      {
+        frames: ['/assets/tiles/desert-mountain/desert-mountain.png'],
       },
     ],
   },
@@ -64,26 +90,26 @@ export class GameComponent implements OnInit {
   public terrain = new Terrain(8, 8, [
     {
       tiles: [
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
       ],
     },
     {
       tiles: [
-        'tree', null, null, null, 'tree', null, null, null,
+        'ruins', null, null, null, 'ruins', null, null, null,
+        null, 'desert-mountain', null, null, null, null, null, null,
+        null, 'desert-mountain', 'desert-mountain', 'ruins', null, null, 'desert-mountain', null,
         null, null, null, null, null, null, null, null,
-        null, null, null, 'tree', null, null, null, null,
-        null, null, null, null, null, null, null, null,
-        null, 'tree', null, null, null, null, null, null,
-        null, null, null, null, null, 'tree', null, null,
-        null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null,
+        null, 'ruins', null, null, null, null, null, null,
+        null, null, null, null, null, 'ruins', null, null,
+        null, null, null, 'desert-mountain', null, null, null, null,
+        null, 'desert-mountain', null, null, null, null, null, null,
       ],
     },
   ]);
@@ -142,7 +168,7 @@ export class GameComponent implements OnInit {
         if (!tile) continue;
 
         const tile_settings = TILES[tile];
-        const sprite = this.generateSprite(tile_settings);
+        const { sprite, texture } = this.generateSprite(tile_settings);
 
         const sprite_x_scale = scale / sprite.texture.orig.width;
         const sprite_y_scale = scale / sprite.texture.orig.height;
@@ -153,7 +179,7 @@ export class GameComponent implements OnInit {
         sprite.x = (x + 0.5) * scale;
         sprite.y = (y + 0.5) * scale;
 
-        if (index === 0) {
+        if (texture.randomize_angle === true) {
           sprite.angle = Math.floor(Math.random() * 3) * 90;
         }
 
@@ -185,6 +211,9 @@ export class GameComponent implements OnInit {
     sprite.animationSpeed = isNaN(alternative.speed) ? 1 : alternative.speed;
     sprite.play();
 
-    return sprite;
+    return {
+      sprite,
+      texture: alternative,
+    };
   }
 }
