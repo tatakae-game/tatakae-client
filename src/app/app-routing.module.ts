@@ -11,7 +11,6 @@ import { LoginComponent } from './views/login/login.component';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { RoomComponent } from './views/room/room.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
-import { ChatComponent } from './views/chat/chat.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [NoAuthGuard], },
