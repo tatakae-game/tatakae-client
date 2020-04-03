@@ -11,7 +11,7 @@ export class GameComponent implements OnInit {
   constructor(private wsService: WsService) { }
 
   ngOnInit(): void {
-    const socket = this.wsService.connect(true)
+    const socket = this.wsService.connect()
 
     console.log('Starting socket server...')
     socket.on('connect', () => {
