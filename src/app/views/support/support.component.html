@@ -1,0 +1,29 @@
+<app-user-control>
+    <app-header></app-header>
+    <main>
+        <div>
+            <form [formGroup]="newRoomForm" (ngSubmit)="onSubmit(newRoomForm.value)">
+                <div class="form-entry">
+                    <label for="subject">Ticket name</label>
+                    <input id="subject" type="text" formControlName="subject" required>
+                </div>
+                <!-- <div class="form-entry">
+                    <label for="guest">Guest name</label>
+                    <input id="guest" type="text" formControlName="guest" required>
+                </div> -->
+                <div class="bottom">
+                    <button class="button" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <hr>
+
+        <div>
+            <a *ngFor="let ticket of tickets" routerLink="/support/room/{{ ticket.id }}" class="chat-room no-style">
+                <div class="chat-room-name">{{ ticket.name }}</div>
+                <div>{{ ticket.users.length }} users</div>
+            </a>
+        </div>
+    </main>
+</app-user-control>

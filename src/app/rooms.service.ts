@@ -52,4 +52,26 @@ export class RoomsService {
       return false;
     }
   }
+
+  async createTicket(name: string) {
+    try {
+      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
+        name,
+        is_ticket: true,
+      }).toPromise();
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getTickets() {
+    try {
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/support/rooms`).toPromise();
+      return res?.rooms || [];
+    } catch {
+      return [];
+    }
+  }
 }
