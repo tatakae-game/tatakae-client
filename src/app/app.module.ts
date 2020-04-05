@@ -23,7 +23,6 @@ import { HomeComponent } from './views/home/home.component';
 import { RoomComponent } from './views/room/room.component';
 import { UserControlComponent } from './user-control/user-control.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
-import { SupportComponent } from './views/support/support.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +37,6 @@ import { SupportComponent } from './views/support/support.component';
     RoomComponent,
     UserControlComponent,
     RoomsComponent,
-    SupportComponent,
   ],
   imports: [
     BrowserModule,

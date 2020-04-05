@@ -1,6 +1,11 @@
 .chat-room {
   width: 100%;
-  background: #811d17;
+  // background: #811d17;
+  background: #2277e6;
+  background: -webkit-linear-gradient(135deg, #469222, #2277e6);
+  background: linear-gradient(135deg, #469222, #2277e6);
+  // background: -webkit-linear-gradient(135deg, #2277e6, #469222);
+  // background: linear-gradient(135deg, #2277e6, #469222);
   border-radius: 5px;
   padding: 16px 50px;
   min-height: 100px;
