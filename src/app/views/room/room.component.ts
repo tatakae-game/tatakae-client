@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 import { WsService } from 'src/app/ws.service';
 import { AuthService } from 'src/app/auth.service';
@@ -7,7 +7,7 @@ import { Message } from 'src/app/models/message.model';
 import { Session } from 'src/app/models/session.model';
 
 import { faImages, faPlay, faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { RoomsService } from 'src/app/rooms.service';
@@ -15,6 +15,7 @@ import { UsersService } from 'src/app/services/users.service';
 
 import { Room } from 'src/app/models/room.model';
 import { User } from 'src/app/models/user.model';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-room',
@@ -41,13 +42,17 @@ export class RoomComponent implements OnInit, AfterViewInit {
 
   searchedUsers: User[] = [];
 
+  isSupportPage: boolean;
+
   constructor(
     private wsService: WsService,
     private authService: AuthService,
     private route: ActivatedRoute,
+    private router: Router,
     private formBuilder: FormBuilder,
     private roomsService: RoomsService,
     private usersService: UsersService,
+    private notifierService: NotifierService,
   ) {
     this.messageForm = this.formBuilder.group({
       message: ['', Validators.required],
@@ -59,6 +64,9 @@ export class RoomComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+
+    this.isSupportPage = this.router.url.includes('support');
+
     this.session = this.authService.session();
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -132,5 +140,24 @@ export class RoomComponent implements OnInit, AfterViewInit {
 
   getUsername(id: string) {
     return this.users.find(user => user.id === id)?.username
+  }
+
+  closeTicket() {
+    this.roomsService.closeTicket(this.room.id).then(r => {
+      this.router.navigateByUrl('/support');
+      this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
+    }).catch(() => {
+      this.notifierService.notify('error', `An error occured while closing the ticket.`);
+    });
+  }
+
+  assignedTo() {
+    this.roomsService.assignedTo(this.room.id).then(r => {
+      console.log(r);
+      // this.router.navigateByUrl('/support');
+      // this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
+    }).catch(() => {
+      this.notifierService.notify('error', `An error occured while assigning the ticket.`);
+    });
   }
 }

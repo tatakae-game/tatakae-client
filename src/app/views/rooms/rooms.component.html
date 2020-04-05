@@ -1,7 +1,37 @@
 <app-user-control>
     <app-header></app-header>
     <main>
-        <a *ngFor="let room of rooms" routerLink="/chat/room/{{ room.id }}" class="chat-room no-style">
+        <div *ngIf="isSupportPage; else addNewRoom">
+            <form [formGroup]="newTicketForm" (ngSubmit)="onTicketSubmit(newTicketForm.value)">
+                <div class="form-entry">
+                    <label for="ticket-name">Ticket name</label>
+                    <input id="ticket-name" type="text" formControlName="name" required>
+                </div>
+                <div class="bottom">
+                    <button class="button" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <ng-template #addNewRoom>
+            <form [formGroup]="newRoomForm" (ngSubmit)="onRoomSubmit(newRoomForm.value)">
+                <div class="form-entry">
+                    <label for="room-name">Room name</label>
+                    <input id="room-name" type="text" formControlName="name" required>
+                </div>
+                <div class="form-entry">
+                    <label for="guest">Guest name</label>
+                    <input id="guest" type="text" formControlName="guest" required>
+                </div>
+                <div class="bottom">
+                    <button class="button" type="submit">Submit</button>
+                </div>
+            </form>
+        </ng-template>
+
+        <hr>
+
+        <a *ngFor="let room of rooms" routerLink="{{ redirectToUrl }}/{{ room.id }}" class="chat-room no-style">
             <div class="chat-room-name">{{ room.name }}</div>
             <div>{{ room.users.length }} users</div>
         </a>

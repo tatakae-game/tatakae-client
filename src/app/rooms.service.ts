@@ -53,6 +53,19 @@ export class RoomsService {
     }
   }
 
+  async createRoom(name: string, guest_id: string) {
+    try {
+      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
+        name,
+        guest: guest_id,
+      }).toPromise();
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async createTicket(name: string) {
     try {
       await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
@@ -66,12 +79,36 @@ export class RoomsService {
     }
   }
 
+  async closeTicket(id: string) {
+    try {
+      await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${id}/close`, {
+        status: 'closed',
+      }).toPromise();
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async getTickets() {
     try {
-      const res = await this.http.get<ApiResponse>(`${config.api_url}/support/rooms`).toPromise();
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/support/tickets`).toPromise();
       return res?.rooms || [];
     } catch {
       return [];
+    }
+  }
+
+  async assignedTo(ticket_id: string, user_id: string = '5e8a36350e7b07178b0cdf4b') {
+    try {
+      await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${ticket_id}/assign`, {
+        user: user_id,
+      }).toPromise()
+      
+      return true;
+    } catch {
+      return false;
     }
   }
 }
