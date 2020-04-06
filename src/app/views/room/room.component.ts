@@ -119,8 +119,10 @@ export class RoomComponent implements OnInit, AfterViewInit {
   }
 
   async onInviteUserUpdate(value: string) {
-    const users = await this.usersService.searchUsers(value);
-    this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+    if (value.length > 0) {
+      const users = await this.usersService.searchUsers(value);
+      this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+    }
   }
 
   sanitizeDate(date: Date): string {
