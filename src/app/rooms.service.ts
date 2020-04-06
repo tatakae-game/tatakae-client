@@ -100,12 +100,12 @@ export class RoomsService {
     }
   }
 
-  async assignedTo(ticket_id: string, user_id: string = '5e8a36350e7b07178b0cdf4b') {
+  async assignedTo(ticket_id: string, user_id: string) {
     try {
       await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${ticket_id}/assign`, {
         user: user_id,
       }).toPromise()
-      
+
       return true;
     } catch {
       return false;
