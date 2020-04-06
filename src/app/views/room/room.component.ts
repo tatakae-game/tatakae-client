@@ -150,14 +150,4 @@ export class RoomComponent implements OnInit, AfterViewInit {
       this.notifierService.notify('error', `An error occured while closing the ticket.`);
     });
   }
-
-  assignedTo() {
-    this.roomsService.assignedTo(this.room.id).then(r => {
-      console.log(r);
-      // this.router.navigateByUrl('/support');
-      // this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
-    }).catch(() => {
-      this.notifierService.notify('error', `An error occured while assigning the ticket.`);
-    });
-  }
 }
