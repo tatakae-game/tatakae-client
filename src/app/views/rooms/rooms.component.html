@@ -21,7 +21,10 @@
                 </div>
                 <div class="form-entry">
                     <label for="guest">Guest name</label>
-                    <input id="guest" type="text" formControlName="guest" required>
+                    <input id="guest" list="guests" type="text" formControlName="guest" required (input)="onInviteUserUpdate($event.target.value)">
+                    <datalist id="guests">
+                        <option *ngFor="let user of searchedUsers" value="{{ user.id }}">{{user.username}}</option>
+                      </datalist>
                 </div>
                 <div class="bottom">
                     <button class="button" type="submit">Submit</button>
