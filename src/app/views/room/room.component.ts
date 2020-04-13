@@ -115,14 +115,9 @@ export class RoomComponent implements OnInit, AfterViewInit {
   }
 
   async onInviteSubmit(data: any) {
-    const guestId = this.searchedUsers.reduce((acc, user) => {
-      if (user.username === data.user) {
-        acc = user.id;
-      }
-      return acc;
-    }, '');
-
-    const res = await this.roomsService.addUser(this.room.id, guestId);
+    const guest = this.searchedUsers.find(user => user.username === data.user);
+    
+    const res = await this.roomsService.addUser(this.room.id, guest.id);
 
     if (res.success) {
       await this.getRoom();

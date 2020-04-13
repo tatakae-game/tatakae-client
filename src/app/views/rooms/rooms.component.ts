@@ -73,14 +73,9 @@ export class RoomsComponent implements OnInit {
   }
 
   async onRoomSubmit(data: any) {
-    const guestId = this.searchedUsers.reduce((acc, user) => {
-      if (user.username === data.guest) {
-        acc = user.id;
-      }
-      return acc;
-    }, '');
+    const guest = this.searchedUsers.find(user => user.username === data.guest)
     
-    const response = await this.roomService.createRoom(data.name, guestId);
+    const response = await this.roomService.createRoom(data.name, guest.id);
     if (response.success) {
       this.notifierService.notify('success', 'Room successfuly created.');
       this.getRooms();
@@ -90,7 +85,7 @@ export class RoomsComponent implements OnInit {
   }
 
   async onGuestUpdate(event: any) {
-    if (event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+    if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
       if (event.target.value.length > 0) {
         const users = await this.usersService.searchUsers(event.target.value);
         this.searchedUsers = users.filter(user => user.username !== this.session.user.username);
