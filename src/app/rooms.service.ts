@@ -48,7 +48,7 @@ export class RoomsService {
       }).toPromise();
 
     } catch {
-      return { success: false, error: 'An error occured.' };
+      throw new Error('An error occured.');
     }
   }
 
@@ -60,7 +60,7 @@ export class RoomsService {
       }).toPromise();
 
     } catch {
-      return { success: false, error: 'An error occured.' };
+      throw new Error('An error occured.');
     }
   }
 
@@ -72,7 +72,7 @@ export class RoomsService {
       }).toPromise();
 
     } catch {
-      return { success: false, error: 'An error occured.' };
+      throw new Error('An error occured.');
     }
   }
 
@@ -82,7 +82,7 @@ export class RoomsService {
 
       return true;
     } catch {
-      return false;
+      throw new Error('An error occured.');
     }
   }
 
@@ -103,7 +103,7 @@ export class RoomsService {
 
       return true;
     } catch {
-      return false;
+      throw new Error('An error occured.');
     }
   }
 }
