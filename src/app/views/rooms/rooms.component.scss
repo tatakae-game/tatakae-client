@@ -1,11 +1,17 @@
+.ticket-color {
+  background-color: #ca792b;
+  background: -webkit-linear-gradient(135deg, #e48c3b, #b16014);
+  background: linear-gradient(135deg, #e48c3b, #b16014);
+}
+
+.room-color {
+  background-color: #5bc0de;
+  background: -webkit-linear-gradient(135deg, #5bc0de, #2277e6);
+  background: linear-gradient(135deg, #5bc0de, #2277e6);
+}
+
 .chat-room {
   width: 100%;
-  // background: #811d17;
-  background: #2277e6;
-  background: -webkit-linear-gradient(135deg, #469222, #2277e6);
-  background: linear-gradient(135deg, #469222, #2277e6);
-  // background: -webkit-linear-gradient(135deg, #2277e6, #469222);
-  // background: linear-gradient(135deg, #2277e6, #469222);
   border-radius: 5px;
   padding: 16px 50px;
   min-height: 100px;
