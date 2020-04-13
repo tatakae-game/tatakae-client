@@ -43,39 +43,36 @@ export class RoomsService {
 
   async addUser(id: string, user_id: string) {
     try {
-      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms/${id}/invite`, {
+      return await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms/${id}/invite`, {
         user: user_id,
       }).toPromise();
 
-      return true;
     } catch {
-      return false;
+      return { success: false, error: 'An error occured.' };
     }
   }
 
   async createRoom(name: string, guest_id: string) {
     try {
-      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
+      return await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
         name,
         guest: guest_id,
       }).toPromise();
 
-      return true;
     } catch {
-      return false;
+      return { success: false, error: 'An error occured.' };
     }
   }
 
   async createTicket(name: string) {
     try {
-      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
+      return await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
         name,
         is_ticket: true,
       }).toPromise();
 
-      return true;
     } catch {
-      return false;
+      return { success: false, error: 'An error occured.' };
     }
   }
 

@@ -74,7 +74,8 @@ export class RoomComponent implements OnInit, AfterViewInit {
       room: id,
     });
 
-    this.room = await this.roomsService.getRoom(id);
+    await this.getRoom();
+    
     const messages = this.room.messages.map(message => ({
       ...message,
       date: new Date(message.date),
@@ -82,7 +83,7 @@ export class RoomComponent implements OnInit, AfterViewInit {
 
     this.messages.push(...messages);
 
-    this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
+    await this.getUsersInRoom();
 
     this.socket.on('new message', (data: Message) => {
       data.date = new Date(data.date);
@@ -114,14 +115,29 @@ export class RoomComponent implements OnInit, AfterViewInit {
   }
 
   async onInviteSubmit(data: any) {
-    const res = await this.roomsService.addUser(this.room.id, data.user)
-    console.log(res)
+    const guestId = this.searchedUsers.reduce((acc, user) => {
+      if (user.username === data.user) {
+        acc = user.id;
+      }
+      return acc;
+    }, '');
+
+    const res = await this.roomsService.addUser(this.room.id, guestId);
+
+    if (res.success) {
+      await this.getRoom();
+      await this.getUsersInRoom();
+    } else {
+      this.notifierService.notify('error', 'An error occured while adding a new guest in the chat room.');
+    }
   }
 
-  async onInviteUserUpdate(value: string) {
-    if (value.length > 0) {
-      const users = await this.usersService.searchUsers(value);
-      this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+  async onInviteUserUpdate(event) {
+    if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+      if (event.target?.value.length > 0) {
+        const users = await this.usersService.searchUsers(event.target.value);
+        this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+      }
     }
   }
 
@@ -151,5 +167,14 @@ export class RoomComponent implements OnInit, AfterViewInit {
     }).catch(() => {
       this.notifierService.notify('error', `An error occured while closing the ticket.`);
     });
+  }
+
+  async getUsersInRoom() {
+    this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
+  }
+
+  async getRoom() {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.room = await this.roomsService.getRoom(id);
   }
 }

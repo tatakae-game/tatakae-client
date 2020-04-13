@@ -8,6 +8,7 @@ import { User } from 'src/app/models/user.model';
 import { UsersService } from 'src/app/services/users.service';
 import { Session } from 'src/app/models/session.model';
 import { AuthService } from 'src/app/auth.service';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-rooms',
@@ -28,6 +29,7 @@ export class RoomsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private usersService: UsersService,
     private authService: AuthService,
+    private notifierService: NotifierService,
   ) { }
 
   ngOnInit(): void {
@@ -49,6 +51,10 @@ export class RoomsComponent implements OnInit {
     this.redirectToUrl = (this.isSupportPage) ? '/support/ticket' : '/chat/room';
   }
 
+  get ticketName() { return this.newTicketForm.get('name') }
+  get roomName() { return this.newRoomForm.get('name') }
+  get roomGuest() { return this.newRoomForm.get('guest') }
+
   async getTickets() {
     this.rooms = await this.roomService.getTickets();
   }
@@ -57,27 +63,38 @@ export class RoomsComponent implements OnInit {
     this.rooms = await this.roomService.getRooms();
   }
 
-  onTicketSubmit(data: any): void {
-    this.roomService.createTicket(data.name).then(response => {
-      if (response) {
-        this.getTickets();
-      }
-    });
+  async onTicketSubmit(data: any) {
+    const success = await this.roomService.createTicket(data.name);
+    if (success) {
+      this.getTickets();
+    } else {
+      this.notifierService.notify('error', 'An error occured while creating a new ticket.');
+    }
   }
 
-  onRoomSubmit(data: any): void {
-    console.log(data);
-    this.roomService.createRoom(data.name, data.guest).then(response => {
-      if (response) {
-        this.getRooms();
+  async onRoomSubmit(data: any) {
+    const guestId = this.searchedUsers.reduce((acc, user) => {
+      if (user.username === data.guest) {
+        acc = user.id;
       }
-    });
+      return acc;
+    }, '');
+    
+    const response = await this.roomService.createRoom(data.name, guestId);
+    if (response.success) {
+      this.notifierService.notify('success', 'Room successfuly created.');
+      this.getRooms();
+    } else {
+      this.notifierService.notify('error', 'An error occured while creating a new chat room.');
+    }
   }
 
-  async onInviteUserUpdate(value: string) {
-    if (value.length > 0) {
-      const users = await this.usersService.searchUsers(value);
-      this.searchedUsers = users.filter(user => user.username !== this.session.user.username);
+  async onGuestUpdate(event: any) {
+    if (event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+      if (event.target.value.length > 0) {
+        const users = await this.usersService.searchUsers(event.target.value);
+        this.searchedUsers = users.filter(user => user.username !== this.session.user.username);
+      }
     }
   }
 }
