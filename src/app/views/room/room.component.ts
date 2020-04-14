@@ -74,7 +74,8 @@ export class RoomComponent implements OnInit, AfterViewInit {
       room: id,
     });
 
-    this.room = await this.roomsService.getRoom(id);
+    await this.getRoom();
+
     const messages = this.room.messages.map(message => ({
       ...message,
       date: new Date(message.date),
@@ -82,7 +83,7 @@ export class RoomComponent implements OnInit, AfterViewInit {
 
     this.messages.push(...messages);
 
-    this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
+    await this.getUsersInRoom();
 
     this.socket.on('new message', (data: Message) => {
       data.date = new Date(data.date);
@@ -114,13 +115,31 @@ export class RoomComponent implements OnInit, AfterViewInit {
   }
 
   async onInviteSubmit(data: any) {
-    const res = await this.roomsService.addUser(this.room.id, data.user)
-    console.log(res)
+    try {
+      const guest = this.searchedUsers.find(user => user.username === data.user);
+
+      const res = await this.roomsService.addUser(this.room.id, guest.id);
+
+      if (res.success) {
+        await this.getRoom();
+        await this.getUsersInRoom();
+      }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
   }
 
-  async onInviteUserUpdate(value: string) {
-    const users = await this.usersService.searchUsers(value);
-    this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+  async onInviteUserUpdate(event) {
+    try {
+      if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+        if (event.target?.value.length > 0) {
+          const users = await this.usersService.searchUsers(event.target.value);
+          this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+        }
+      }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
   }
 
   sanitizeDate(date: Date): string {
@@ -142,22 +161,32 @@ export class RoomComponent implements OnInit, AfterViewInit {
     return this.users.find(user => user.id === id)?.username
   }
 
-  closeTicket() {
-    this.roomsService.closeTicket(this.room.id).then(r => {
-      this.router.navigateByUrl('/support');
-      this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
-    }).catch(() => {
-      this.notifierService.notify('error', `An error occured while closing the ticket.`);
-    });
+  async closeTicket() {
+    try {
+      const res = await this.roomsService.closeTicket(this.room.id);
+      if (res?.success) {
+        await this.router.navigateByUrl('/support');
+        this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
+      }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
   }
 
-  assignedTo() {
-    this.roomsService.assignedTo(this.room.id).then(r => {
-      console.log(r);
-      // this.router.navigateByUrl('/support');
-      // this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
-    }).catch(() => {
-      this.notifierService.notify('error', `An error occured while assigning the ticket.`);
-    });
+  async getUsersInRoom() {
+    try {
+      this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
+    } catch (error) {
+      this.notifierService.notify('error', `An error occured while closing the ticket.`);
+    }
+  }
+
+  async getRoom() {
+    try {
+      const id = this.route.snapshot.paramMap.get('id');
+      this.room = await this.roomsService.getRoom(id);
+    } catch (error) {
+      this.notifierService.notify('error', `An error occured while closing the ticket.`);
+    }
   }
 }

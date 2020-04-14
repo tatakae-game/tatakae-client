@@ -43,51 +43,46 @@ export class RoomsService {
 
   async addUser(id: string, user_id: string) {
     try {
-      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms/${id}/invite`, {
+      return await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms/${id}/invite`, {
         user: user_id,
       }).toPromise();
 
-      return true;
     } catch {
-      return false;
+      throw new Error('An error occured.');
     }
   }
 
   async createRoom(name: string, guest_id: string) {
     try {
-      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
+      return await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
         name,
         guest: guest_id,
       }).toPromise();
 
-      return true;
     } catch {
-      return false;
+      throw new Error('An error occured.');
     }
   }
 
   async createTicket(name: string) {
     try {
-      await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
+      return await this.http.post<ApiResponse>(`${config.api_url}/chat/rooms`, {
         name,
         is_ticket: true,
       }).toPromise();
 
-      return true;
     } catch {
-      return false;
+      throw new Error('An error occured.');
     }
   }
 
   async closeTicket(id: string) {
     try {
-      await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${id}/close`, {
-        status: 'closed',
-      }).toPromise();
+      return await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${id}/close`, {}).toPromise();
 
-      return true;
+      // return true;
     } catch {
-      return false;
+      throw new Error('An error occured.');
     }
   }
 
@@ -100,15 +95,15 @@ export class RoomsService {
     }
   }
 
-  async assignedTo(ticket_id: string, user_id: string = '5e8a36350e7b07178b0cdf4b') {
+  async assignedTo(ticket_id: string, user_id: string) {
     try {
       await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${ticket_id}/assign`, {
         user: user_id,
       }).toPromise()
-      
+
       return true;
     } catch {
-      return false;
+      throw new Error('An error occured.');
     }
   }
 }

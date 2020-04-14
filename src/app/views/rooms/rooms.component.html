@@ -6,9 +6,12 @@
                 <div class="form-entry">
                     <label for="ticket-name">Ticket name</label>
                     <input id="ticket-name" type="text" formControlName="name" required>
+                    <div *ngIf="ticketName.invalid && (ticketName.dirty || ticketName.touched)" class="error-message">
+                        Ticket name is required.
+                    </div>
                 </div>
                 <div class="bottom">
-                    <button class="button" type="submit">Submit</button>
+                    <button class="button" [disabled]="!newTicketForm.valid" type="submit">Submit</button>
                 </div>
             </form>
         </div>
@@ -18,20 +21,32 @@
                 <div class="form-entry">
                     <label for="room-name">Room name</label>
                     <input id="room-name" type="text" formControlName="name" required>
+                    <div *ngIf="roomName.invalid && (roomName.dirty || roomName.touched)" class="error-message">
+                        Room name is required.
+                    </div>
                 </div>
                 <div class="form-entry">
                     <label for="guest">Guest name</label>
-                    <input id="guest" type="text" formControlName="guest" required>
+                    <input id="guest" list="guests" type="text" formControlName="guest" required
+                        (keyup)="onGuestUpdate($event)">
+                    <div *ngIf="roomGuest.invalid && (roomGuest.dirty || roomGuest.touched)" class="error-message">
+                        Guest username is required.
+                    </div>
+                    <datalist id="guests">
+                        <option *ngFor="let user of searchedUsers" value="{{ user.username }}">{{user.username}}
+                        </option>
+                    </datalist>
                 </div>
                 <div class="bottom">
-                    <button class="button" type="submit">Submit</button>
+                    <button class="button" [disabled]="!newRoomForm.valid" type="submit">Submit</button>
                 </div>
             </form>
         </ng-template>
 
         <hr>
 
-        <a *ngFor="let room of rooms" routerLink="{{ redirectToUrl }}/{{ room.id }}" class="chat-room no-style">
+        <a *ngFor="let room of rooms" routerLink="{{ redirectToUrl }}/{{ room.id }}"
+            [ngClass]="isSupportPage ? 'ticket-color' : 'room-color'" class="chat-room no-style">
             <div class="chat-room-name">{{ room.name }}</div>
             <div>{{ room.users.length }} users</div>
         </a>
