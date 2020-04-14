@@ -75,7 +75,7 @@ export class RoomComponent implements OnInit, AfterViewInit {
     });
 
     await this.getRoom();
-    
+
     const messages = this.room.messages.map(message => ({
       ...message,
       date: new Date(message.date),
@@ -115,24 +115,30 @@ export class RoomComponent implements OnInit, AfterViewInit {
   }
 
   async onInviteSubmit(data: any) {
-    const guest = this.searchedUsers.find(user => user.username === data.user);
-    
-    const res = await this.roomsService.addUser(this.room.id, guest.id);
+    try {
+      const guest = this.searchedUsers.find(user => user.username === data.user);
 
-    if (res.success) {
-      await this.getRoom();
-      await this.getUsersInRoom();
-    } else {
-      this.notifierService.notify('error', 'An error occured while adding a new guest in the chat room.');
+      const res = await this.roomsService.addUser(this.room.id, guest.id);
+
+      if (res.success) {
+        await this.getRoom();
+        await this.getUsersInRoom();
+      }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
     }
   }
 
   async onInviteUserUpdate(event) {
-    if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
-      if (event.target?.value.length > 0) {
-        const users = await this.usersService.searchUsers(event.target.value);
-        this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+    try {
+      if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+        if (event.target?.value.length > 0) {
+          const users = await this.usersService.searchUsers(event.target.value);
+          this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
+        }
       }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
     }
   }
 
@@ -155,21 +161,32 @@ export class RoomComponent implements OnInit, AfterViewInit {
     return this.users.find(user => user.id === id)?.username
   }
 
-  closeTicket() {
-    this.roomsService.closeTicket(this.room.id).then(r => {
-      this.router.navigateByUrl('/support');
-      this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
-    }).catch(() => {
-      this.notifierService.notify('error', `An error occured while closing the ticket.`);
-    });
+  async closeTicket() {
+    try {
+      const res = await this.roomsService.closeTicket(this.room.id);
+      if (res?.success) {
+        await this.router.navigateByUrl('/support');
+        this.notifierService.notify('success', `Ticket ${this.room.name} closed successfuly.`);
+      }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
   }
 
   async getUsersInRoom() {
-    this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
+    try {
+      this.users = await Promise.all(this.room.users.map(id => this.usersService.getUser(id)));
+    } catch (error) {
+      this.notifierService.notify('error', `An error occured while closing the ticket.`);
+    }
   }
 
   async getRoom() {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.room = await this.roomsService.getRoom(id);
+    try {
+      const id = this.route.snapshot.paramMap.get('id');
+      this.room = await this.roomsService.getRoom(id);
+    } catch (error) {
+      this.notifierService.notify('error', `An error occured while closing the ticket.`);
+    }
   }
 }

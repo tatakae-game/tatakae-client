@@ -56,40 +56,61 @@ export class RoomsComponent implements OnInit {
   get roomGuest() { return this.newRoomForm.get('guest') }
 
   async getTickets() {
-    this.rooms = await this.roomService.getTickets();
+    try {
+      this.rooms = await this.roomService.getTickets();
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
   }
 
   async getRooms() {
-    this.rooms = await this.roomService.getRooms();
+    try {
+      this.rooms = await this.roomService.getRooms();
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
   }
 
   async onTicketSubmit(data: any) {
-    const success = await this.roomService.createTicket(data.name);
-    if (success) {
-      this.getTickets();
-    } else {
-      this.notifierService.notify('error', 'An error occured while creating a new ticket.');
+    try {
+      const success = await this.roomService.createTicket(data.name);
+      if (success) {
+        this.notifierService.notify('success', 'Ticket successfuly created.');
+        this.getTickets();
+      } else {
+        this.notifierService.notify('error', 'An error occured while creating a new ticket.');
+      }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
     }
   }
 
   async onRoomSubmit(data: any) {
-    const guest = this.searchedUsers.find(user => user.username === data.guest)
-    
-    const response = await this.roomService.createRoom(data.name, guest.id);
-    if (response.success) {
-      this.notifierService.notify('success', 'Room successfuly created.');
-      this.getRooms();
-    } else {
-      this.notifierService.notify('error', 'An error occured while creating a new chat room.');
+    try {
+      const guest = this.searchedUsers.find(user => user.username === data.guest)
+
+      const response = await this.roomService.createRoom(data.name, guest.id);
+      if (response.success) {
+        this.notifierService.notify('success', 'Room successfuly created.');
+        this.getRooms();
+      } else {
+        this.notifierService.notify('error', 'An error occured while creating a new chat room.');
+      }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
     }
   }
 
   async onGuestUpdate(event: any) {
-    if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
-      if (event.target.value.length > 0) {
-        const users = await this.usersService.searchUsers(event.target.value);
-        this.searchedUsers = users.filter(user => user.username !== this.session.user.username);
+    try {
+      if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+        if (event.target.value.length > 0) {
+          const users = await this.usersService.searchUsers(event.target.value);
+          this.searchedUsers = users.filter(user => user.username !== this.session.user.username);
+        }
       }
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
     }
   }
 }

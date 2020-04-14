@@ -78,9 +78,9 @@ export class RoomsService {
 
   async closeTicket(id: string) {
     try {
-      await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${id}/close`, {}).toPromise();
+      return await this.http.put<ApiResponse>(`${config.api_url}/support/tickets/${id}/close`, {}).toPromise();
 
-      return true;
+      // return true;
     } catch {
       throw new Error('An error occured.');
     }
