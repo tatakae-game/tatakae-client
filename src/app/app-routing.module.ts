@@ -11,10 +11,12 @@ import { LoginComponent } from './views/login/login.component';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { RoomComponent } from './views/room/room.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
+import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [NoAuthGuard], },
   { path: '', pathMatch: 'full', redirectTo: '/editor', },
+  { path: 'dashboard', component: DashboardAdminComponent, canActivate: [AuthGuard], },
   { path: 'chat', component: RoomsComponent, canActivate: [AuthGuard], },
   { path: 'chat/room/:id', component: RoomComponent, canActivate: [AuthGuard], },
   { path: 'support', component: RoomsComponent, canActivate: [AuthGuard], },
