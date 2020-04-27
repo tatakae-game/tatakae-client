@@ -12,9 +12,14 @@ hr {
   margin-right: auto;
 }
 
-.titi {
+.component-container {
+  display: flex;
   width: 100%;
   background: #e6e6e6 !important;
+
+  > ng-content {
+    display: flex;
+  }
 
   > footer {
     display: flex;
