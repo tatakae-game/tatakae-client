@@ -24,6 +24,7 @@ import { RoomComponent } from './views/room/room.component';
 import { UserControlComponent } from './user-control/user-control.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
 import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
+import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.compo
     UserControlComponent,
     RoomsComponent,
     DashboardAdminComponent,
+    PermissionGroupsComponent,
   ],
   imports: [
     BrowserModule,
