@@ -1,0 +1,52 @@
+table {
+    width: 100%;
+}
+
+.space {
+    padding-top: 7px;
+    padding-bottom: 28px;
+}
+
+mat-paginator {
+    display: flex;
+    justify-content: center;
+}
+
+.edit-area {
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+::ng-deep .mat-focus-indicator {
+    box-shadow: none;
+    outline: none !important;
+}
+
+.container {
+    padding: 50px;
+}
+
+.control-bar {
+    display: flex;
+    align-items: center;
+
+    button {
+        display: flex;
+        justify-content: center;
+        height: 35px;
+        background: #ff4081;
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    mat-form-field {
+        width: 100%;
+        padding-right: 10px;
+
+        input {
+            color: black;
+        }
+    }
+
+}
