@@ -1,6 +1,7 @@
 import { User } from './models/user.model';
 import { Room } from './models/room.model';
 import { Message } from './models/message.model';
+import { Group } from './models/group.model';
 
 export interface ApiResponse {
     success: boolean;
@@ -13,4 +14,6 @@ export interface ApiResponse {
     room: Room;
     messages: Message[];
     users: User[];
+    group: Group;
+    groups: Group[];
 }
