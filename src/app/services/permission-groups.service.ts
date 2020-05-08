@@ -17,7 +17,6 @@ export class PermissionGroupsService {
     try {
       return await this.http.get<ApiResponse>(`${config.api_url}/groups`).toPromise();
     } catch (error) {
-      console.log(error);
       throw new Error('An error occured.');
     }
   }
@@ -41,6 +40,21 @@ export class PermissionGroupsService {
       }).toPromise();
     } catch (error) {
       throw new Error(`An error occured while updating ${group.name}.`);
+    }
+  }
+
+  async getDefaultPermissionsName(): Promise<string[]> {
+    try {
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/permissions`).toPromise();
+
+      if (res?.success) {
+        return res.permissions.map(p => p.name.toLocaleLowerCase());
+      } else {
+        return [];
+      }
+    } catch (error) {
+      throw new Error(error.message);
+      
     }
   }
 
