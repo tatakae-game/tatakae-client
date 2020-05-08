@@ -8,6 +8,7 @@ import { faPlusSquare, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { NotifierService } from 'angular-notifier';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionsGroupDialogComponent } from '../../dialogs/permissions-groups-dialog/permissions-groups-dialog.component';
+import { Permission } from 'src/app/models/permission.model';
 
 @Component({
   selector: 'app-permission-groups',
@@ -16,7 +17,8 @@ import { PermissionsGroupDialogComponent } from '../../dialogs/permissions-group
 })
 export class PermissionGroupsComponent implements OnInit {
 
-  displayedColumns: string[] = ['name', 'permissions'];
+  displayedColumns: string[];
+  defaultPermissionsName: string[];
   groups: MatTableDataSource<Group>;
 
   addIcon = faPlusSquare;
@@ -31,13 +33,32 @@ export class PermissionGroupsComponent implements OnInit {
     public dialog: MatDialog,
   ) { }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
+    await this.initDisplayedColumns();
     await this.getGroups();
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.groups.filter = filterValue.trim().toLowerCase();
+  }
+
+  async initDisplayedColumns(): Promise<void> {
+    try {
+      this.defaultPermissionsName = await this.groupsService.getDefaultPermissionsName();
+      if (this.defaultPermissionsName.length) {
+        this.displayedColumns = ['name'].concat(this.defaultPermissionsName);
+      } else {
+        this.notifierService.notify('error', 'Any permission has been set');
+      }
+
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
+  }
+
+  getPermissionValueByName(name: string, permissions: Permission[]): Permission {
+    return permissions.find(p => p.name.toLowerCase() === name)
   }
 
   async getGroups() {

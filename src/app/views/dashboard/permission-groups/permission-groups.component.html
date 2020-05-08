@@ -24,21 +24,23 @@
                     </td>
                 </ng-container>
 
-                <ng-container matColumnDef="permissions">
-                    <th mat-header-cell *matHeaderCellDef> Permissions </th>
-                    <td mat-cell *matCellDef="let group">
-                        <div *ngFor="let permission of group.permissions">
-                            <mat-slide-toggle (change)="updateGroup(group)" [(ngModel)]="permission.value" class="space"
-                                [checked]="permission.value"> {{permission.name}} </mat-slide-toggle>
-                        </div>
-                    </td>
-                </ng-container>
+                <div *ngFor="let pName of defaultPermissionsName">
+                    <ng-container matColumnDef="{{pName}}">
+                        <th mat-header-cell *matHeaderCellDef> {{pName | titlecase}} </th>
+                        <td mat-cell *matCellDef="let group">
+                            <mat-slide-toggle (change)="updateGroup(group)"
+                                [(ngModel)]="getPermissionValueByName(pName, group.permissions).value"
+                                [checked]="getPermissionValueByName(pName, group.permissions).value">
+                            </mat-slide-toggle>
+                        </td>
+                    </ng-container>
+                </div>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             </table>
-            <mat-paginator class="mat-elevation-z8" [length]="groups?.data.length" [pageSize]="5"
+            <mat-paginator class="mat-elevation-z8" [length]="groups?.data.length" [pageSize]="10"
                 [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons>
             </mat-paginator>
         </div>
