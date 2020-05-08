@@ -2,6 +2,7 @@ import { User } from './models/user.model';
 import { Room } from './models/room.model';
 import { Message } from './models/message.model';
 import { Group } from './models/group.model';
+import { Permission } from './models/permission.model';
 
 export interface ApiResponse {
     success: boolean;
@@ -16,4 +17,5 @@ export interface ApiResponse {
     users: User[];
     group: Group;
     groups: Group[];
+    permissions: Permission[];
 }
