@@ -20,24 +20,6 @@ hr {
   > ng-content {
     display: flex;
   }
-
-  > footer {
-    display: flex;
-    width: 100%;
-    bottom: 12px;
-    position: fixed;
-
-    justify-items: center;
-
-    > span {
-      display: flex;
-      justify-content: center;
-      width: 85%;
-      bottom: 0;
-
-      color: #ca792b;
-    }
-  }
 }
 
 header {
