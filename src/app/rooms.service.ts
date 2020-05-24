@@ -88,7 +88,7 @@ export class RoomsService {
 
   async getTickets() {
     try {
-      const res = await this.http.get<ApiResponse>(`${config.api_url}/support/tickets`).toPromise();
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/support/user/tickets`).toPromise();
       return res?.rooms || [];
     } catch {
       return [];
