@@ -7,6 +7,7 @@ enum TileType {
 }
 
 interface TileTexture {
+  chance?: number,
   speed?: number;
   randomize_angle?: boolean;
   frames: string[];
@@ -22,8 +23,25 @@ const TILES: { [key: string]: TileSettings } = {
     type: TileType.Floor,
     textures: [
       {
-        randomize_angle: true,
-        frames: ['/assets/tiles/grass/grass.png'],
+        chance: 10,
+        speed: 0.1,
+        randomize_angle: false,
+        frames: [
+          '/assets/tiles/grass/1/grass1.png',
+          '/assets/tiles/grass/1/grass2.png',
+          '/assets/tiles/grass/1/grass3.png',
+          '/assets/tiles/grass/1/grass4.png',
+        ],
+      },
+      {
+        chance: 10,
+        randomize_angle: false,
+        frames: ['/assets/tiles/grass/2/grass.png'],
+      },
+      {
+        chance: 80,
+        randomize_angle: false,
+        frames: ['/assets/tiles/grass/3/grass.png'],
       },
     ],
   },
@@ -87,29 +105,45 @@ class Terrain {
 export class GameComponent implements OnInit {
   public app: PIXI.Application;
 
-  public terrain = new Terrain(8, 8, [
+  public terrain = new Terrain(16, 16, [
     {
       tiles: [
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
-        'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand', 'sand',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
+        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
       ],
     },
     {
       tiles: [
-        'ruins', null, null, null, 'ruins', null, null, null,
-        null, 'desert-mountain', null, null, null, null, null, null,
-        null, 'desert-mountain', 'desert-mountain', 'ruins', null, null, 'desert-mountain', null,
-        null, null, null, null, null, null, null, null,
-        null, 'ruins', null, null, null, null, null, null,
-        null, null, null, null, null, 'ruins', null, null,
-        null, null, null, 'desert-mountain', null, null, null, null,
-        null, 'desert-mountain', null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
       ],
     },
   ]);
@@ -124,6 +158,7 @@ export class GameComponent implements OnInit {
         backgroundColor: 0x1099bb,
         width: this.canvas_size,
         height: this.canvas_size,
+        antialias: false,
       });
 
       let loader = new PIXI.Loader();
@@ -197,7 +232,7 @@ export class GameComponent implements OnInit {
   }
 
   generateSprite(tile_settings: TileSettings) {
-    const alternative = tile_settings.textures[Math.floor(Math.random() * tile_settings.textures.length)];
+    const alternative = this.chooseAlternative(tile_settings.textures);
     const textures = alternative.frames.map(path => {
       const texture = PIXI.Texture.from(path);
       texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
@@ -215,5 +250,17 @@ export class GameComponent implements OnInit {
       sprite,
       texture: alternative,
     };
+  }
+
+  chooseAlternative(textures: TileTexture[]): TileTexture {
+    const dices = Math.random() * 100;
+
+    for (const texture of textures) {
+      if (dices <= texture.chance) {
+        return texture;
+      }
+    }
+
+    return textures[Math.floor(Math.random() * textures.length)];
   }
 }
