@@ -1,9 +1,12 @@
 <app-user-control>
-    <app-header></app-header>
-    <main class="editor">
-        <div class="monaco-container">
-            <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
-        </div>
-        <app-game></app-game>
-    </main>
+  <app-header></app-header>
+  <main class="editor">
+    <div class="monaco-container">
+      <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
+
+      <button (click)="testCode()">Test code</button>
+    </div>
+
+    <app-game></app-game>
+  </main>
 </app-user-control>

@@ -15,6 +15,10 @@ export class PlayComponent implements OnInit {
     socket.on('match found', (data) => {
       console.log(data)
     })
+
+    socket.on('round actions', (data) => {
+      console.log(data)
+    })
   }
 
 }
