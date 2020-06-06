@@ -5,6 +5,7 @@ import { WsService } from '../ws.service';
 enum TileType {
   Floor,
   BlockingObstacle,
+  Entity,
 }
 
 interface TileTexture {
@@ -18,6 +19,10 @@ interface TileSettings {
   type: TileType;
   textures?: TileTexture[];
 }
+
+const sleep = (ms: number) => new Promise((resolve) => {
+  setTimeout(resolve, ms)
+})
 
 const TILES: { [key: string]: TileSettings } = {
   'grass': {
@@ -85,6 +90,24 @@ const TILES: { [key: string]: TileSettings } = {
       }
     ],
   },
+  'robot': {
+    type: TileType.Entity,
+    textures: [
+      {
+        frames: [
+          '/assets/tiles/robot/robot.png',
+        ],
+      }
+    ],
+  },
+}
+
+interface Unit {
+  hp: number;
+  id: string;
+  model: string;
+  orientation: string;
+  sprite: PIXI.AnimatedSprite;
 }
 
 interface Layers {
@@ -92,12 +115,17 @@ interface Layers {
   ground: string[];
   items: string[][];
   obstacles: string[];
-  opponent: string[];
+  units: Unit[];
 }
 
 interface Tilemap {
   layers: Layers;
   square_size: number;
+}
+
+interface Action {
+  name: string;
+  [key: string]: any;
 }
 
 class Terrain {
@@ -176,6 +204,27 @@ export class GameComponent implements OnInit {
     }
   }
 
+  spawnUnit(terrain: Tilemap, unit: Unit, x: number, y: number): Unit {
+    const scale = this.canvas_size / terrain.square_size;
+    const sprite = this.renderSprite(TILES['robot'], scale, x, y);
+
+    if (unit.orientation == 'up') {
+      sprite.angle = 0;
+    } else if (unit.orientation == 'right') {
+      sprite.angle = 90;
+    } else if (unit.orientation == 'down') {
+      sprite.angle = 180;
+    } else if (unit.orientation == 'left') {
+      sprite.angle = 270;
+    }
+
+    this.app.stage.addChild(sprite);
+
+    unit.sprite = sprite;
+
+    return unit;
+  }
+
   renderSprite(tile_settings: TileSettings, scale: number, x: number, y: number): PIXI.AnimatedSprite {
     const { sprite, texture } = this.generateSprite(tile_settings);
 
@@ -193,6 +242,11 @@ export class GameComponent implements OnInit {
     }
 
     return sprite;
+  }
+
+  moveSprite(sprite: PIXI.AnimatedSprite, scale: number, x: number, y: number) {
+    sprite.x = (x + 0.5) * scale;
+    sprite.y = (y + 0.5) * scale;
   }
 
   generateSprite(tile_settings: TileSettings) {
@@ -241,19 +295,87 @@ export class GameComponent implements OnInit {
 
     this.socket.on('match found', (data: { map: Tilemap, opponent_username: string, username: string }) => {
       map = data.map;
+      map.layers.units = Array(map.square_size ** 2).fill(null);
+
       this.loadGame(map);
+
+      console.log(map)
 
       this.socket.on('spawn', (data) => {
         console.log('spawn:', data)
+
+        this.handleActions(map, data.actions)
       });
 
       this.socket.on('round actions', (data) => {
         console.log('round:', data)
+
+        this.handleActions(map, data.actions)
       });
 
       this.socket.on('end test phase', (data) => {
         console.log("test ended")
       });
     });
+  }
+
+  async handleActions(map: Tilemap, actions: Action[]) {
+    for (const action of actions) {
+      await this.handleAction(map, action);
+    }
+  }
+
+  async handleAction(map: Tilemap, action: Action) {
+    const { name } = action
+
+    if (name == 'spawn') {
+      const unit: Unit = {
+        hp: action.unit.hp,
+        id: action.unit.id,
+        model: action.unit.model,
+        orientation: action.unit.orientation,
+        sprite: null,
+      }
+
+      const { position } = action.unit
+
+      map.layers.units[position.x + (position.y * map.square_size)] = unit
+
+      this.spawnUnit(map, unit, position.x, position.y);
+    } else if (name == 'walk') {
+      const { unit, position } = this.findUnit(map, action.robot_id);
+
+      map.layers.units[action.new_position.x + (action.new_position.y * map.square_size)] = unit
+      map.layers.units[position.x + (position.y * map.square_size)] = null
+
+      const scale = this.canvas_size / map.square_size;
+      this.moveSprite(unit.sprite, scale, position.x, position.y);
+    }
+
+    await sleep(500);
+  }
+
+  findUnit(map: Tilemap, id: string): { unit: Unit, position: { x: number, y: number } } {
+    const position = { x: 0, y: 0 };
+    let unit: Unit = null;
+
+    for (let i = 0; i < map.layers.units.length; i++) {
+      unit = map.layers.units[i]
+
+      if (!unit || (unit.id !== id)) {
+        continue;
+      }
+
+      position.x = i % map.square_size;
+      position.y = Math.floor(i / map.square_size);
+
+      break;
+    }
+
+    if (!unit) {
+      console.log(`Unit ${id} not found.`)
+    }
+
+    return { unit, position };
   }
 }
