@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef, NgZone } from '@angular/core';
 import * as PIXI from 'pixi.js';
+import { WsService } from '../ws.service';
 
 enum TileType {
   Floor,
@@ -86,16 +87,25 @@ const TILES: { [key: string]: TileSettings } = {
   },
 }
 
+interface Layers {
+  addresses: { x: number, y: number }[];
+  ground: string[];
+  items: string[][];
+  obstacles: string[];
+  opponent: string[];
+}
+
 interface Tilemap {
-  tiles: string[];
+  layers: Layers;
+  square_size: number;
 }
 
 class Terrain {
   constructor(public width: number, public height: number, public tilemaps: Tilemap[] = []) { }
 
-  get(tilemap: Tilemap, x: number, y: number) {
-    return tilemap.tiles[x + (y * this.width)];
-  }
+  // get(tilemap: Tilemap, x: number, y: number) {
+  //   return tilemap.tiles[x + (y * this.width)];
+  // }
 }
 
 @Component({
@@ -105,52 +115,11 @@ class Terrain {
 export class GameComponent implements OnInit {
   public app: PIXI.Application;
 
-  public terrain = new Terrain(16, 16, [
-    {
-      tiles: [
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-        'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass',
-      ],
-    },
-    {
-      tiles: [
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-      ],
-    },
-  ]);
+  private socket: SocketIOClient.Socket = null;
 
   public canvas_size = 512;
 
-  constructor(private elementRef: ElementRef, private ngZone: NgZone) { }
+  constructor(private wsService: WsService, private elementRef: ElementRef, private ngZone: NgZone) { }
 
   ngOnInit(): void {
     this.ngZone.runOutsideAngular(() => {
@@ -161,74 +130,69 @@ export class GameComponent implements OnInit {
         antialias: false,
       });
 
-      let loader = new PIXI.Loader();
+      const loader = new PIXI.Loader();
 
-      const unique_tilemaps_tiles = this.terrain.tilemaps
-        .map(tilemap => new Set(tilemap.tiles))
-        .reduce((a, v) => a.concat(...v), [])
+      for (const name in TILES) {
+        const tile = TILES[name];
 
-      const unique_tiles = new Set<string>(unique_tilemaps_tiles);
-      [...unique_tiles].filter(tile => !!tile).forEach(tile => {
-        const tile_settings = TILES[tile];
+        const textures = tile.textures.reduce((acc, textures) => {
+          return acc.concat(textures.frames)
+        }, []);
 
-        if (tile_settings) {
-          loader.add(tile_settings.textures.reduce((acc, textures) => {
-            return acc.concat(textures.frames)
-          }, []));
-        }
-      });
+        loader.add(textures);
+      }
 
-      loader.load(() => {
-        this.loadGame();
-      });
+      loader.load();
     });
 
     this.elementRef.nativeElement.appendChild(this.app.view);
   }
 
-  loadGame() {
-    this.terrain.tilemaps.forEach((tilemap, i) => this.generateTilemap(tilemap, i));
+  loadGame(terrain: Tilemap) {
+    this.app.stage.removeChildren();
+
+    // this.terrain.tilemaps.forEach((tilemap, i) => this.generateTilemap(tilemap));
+    this.generateGroundTilemap(terrain);
   }
 
-  generateTilemap(tilemap: Tilemap, index: number) {
-    const scale = this.canvas_size / this.terrain.height
+  generateGroundTilemap(terrain: Tilemap) {
+    const ground = terrain.layers.ground;
+
+    const scale = this.canvas_size / terrain.square_size
     const container = new PIXI.Container();
 
     this.app.stage.addChild(container);
 
-    for (let y = 0; y < this.terrain.height; y++) {
-      for (let x = 0; x < this.terrain.width; x++) {
-        const tile = this.terrain.get(tilemap, x, y);
+    for (let y = 0; y < terrain.square_size; y++) {
+      for (let x = 0; x < terrain.square_size; x++) {
+        const tile = ground[x + (y * terrain.square_size)];
 
         if (!tile) continue;
 
-        const tile_settings = TILES[tile];
-        const { sprite, texture } = this.generateSprite(tile_settings);
-
-        const sprite_x_scale = scale / sprite.texture.orig.width;
-        const sprite_y_scale = scale / sprite.texture.orig.height;
-
-        sprite.scale.set(sprite_x_scale, sprite_y_scale);
-        sprite.anchor.set(0.5, 0.5);
-
-        sprite.x = (x + 0.5) * scale;
-        sprite.y = (y + 0.5) * scale;
-
-        if (texture.randomize_angle === true) {
-          sprite.angle = Math.floor(Math.random() * 3) * 90;
-        }
+        const sprite = this.renderSprite(TILES[tile], scale, x, y)
 
         container.addChild(sprite);
       }
     }
+  }
 
-    // Move container to the center
-    container.x = 0;
-    container.y = 0;
+  renderSprite(tile_settings: TileSettings, scale: number, x: number, y: number): PIXI.AnimatedSprite {
+    const { sprite, texture } = this.generateSprite(tile_settings);
 
-    // Center bunny sprite in local container coordinates
-    container.pivot.x = 0;
-    container.pivot.y = 0;
+    const sprite_x_scale = scale / sprite.texture.orig.width;
+    const sprite_y_scale = scale / sprite.texture.orig.height;
+
+    sprite.scale.set(sprite_x_scale, sprite_y_scale);
+    sprite.anchor.set(0.5, 0.5);
+
+    sprite.x = (x + 0.5) * scale;
+    sprite.y = (y + 0.5) * scale;
+
+    if (texture.randomize_angle === true) {
+      sprite.angle = Math.floor(Math.random() * 3) * 90;
+    }
+
+    return sprite;
   }
 
   generateSprite(tile_settings: TileSettings) {
@@ -262,5 +226,34 @@ export class GameComponent implements OnInit {
     }
 
     return textures[Math.floor(Math.random() * textures.length)];
+  }
+
+  public run(code: string) {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+
+    this.socket = this.wsService.connect('/matchmaking', { test: "true", code, }, {
+      reconnection: false,
+    })
+
+    let map: Tilemap = null;
+
+    this.socket.on('match found', (data: { map: Tilemap, opponent_username: string, username: string }) => {
+      map = data.map;
+      this.loadGame(map);
+
+      this.socket.on('spawn', (data) => {
+        console.log('spawn:', data)
+      });
+
+      this.socket.on('round actions', (data) => {
+        console.log('round:', data)
+      });
+
+      this.socket.on('end test phase', (data) => {
+        console.log("test ended")
+      });
+    });
   }
 }

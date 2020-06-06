@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { WsService } from 'src/app/ws.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { GameComponent } from 'src/app/game/game.component';
 
 @Component({
   selector: 'app-editor',
@@ -12,26 +12,18 @@ export class EditorComponent implements OnInit {
     language: 'javascript',
   };
 
-  code = 'function x() {\nconsole.log("Hello world!");\n}';
+  @ViewChild(GameComponent)
+  game: GameComponent;
 
-  constructor(private wsService: WsService) { }
+  code = 'robot.walk(2)\n';
+
+  constructor() { }
 
   ngOnInit(): void {
   }
 
 
   testCode() {
-    const socket = this.wsService.connect('/matchmaking', {test: "true", code : this.code})
-    socket.on('match found', (data) => {
-      console.log(data)
-    })
-
-    socket.on('round actions', (data) => {
-      console.log(data)
-    })
-
-    socket.on('end test phase', (data) => {
-      console.log("test ended")
-    })
+    this.game.run(this.code);
   }
 }
