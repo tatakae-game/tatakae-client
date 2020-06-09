@@ -128,12 +128,82 @@ interface Action {
   [key: string]: any;
 }
 
-class Terrain {
-  constructor(public width: number, public height: number, public tilemaps: Tilemap[] = []) { }
+type QueueCallback = () => any;
 
-  // get(tilemap: Tilemap, x: number, y: number) {
-  //   return tilemap.tiles[x + (y * this.width)];
-  // }
+class AnimationQueue {
+  private stack: QueueCallback[] = [];
+  private isActive = false;
+  private kill = false;
+
+  private started = false;
+  private errored = false;
+
+  private running: any = null;
+
+  add(cb: QueueCallback) {
+    if (!this.errored) {
+      this.stack.push(cb);
+    }
+
+    if (this.started && !this.errored) {
+      this.wake();
+    }
+  }
+
+  async next() {
+    try {
+      if (this.stack.length > 0) {
+        this.isActive = true;
+        const cb = this.stack.shift();
+        this.running = cb();
+
+        await this.running;
+        this.running = null;
+
+        if (!this.kill) {
+          this.next();
+        }
+      } else {
+        this.isActive = false;
+      }
+    } catch (e) {
+      console.error(e)
+      this.errored = true;
+
+      this.running = null;
+      this.isActive = false;
+    }
+  }
+
+  wake() {
+    if (!this.isActive) {
+      this.next();
+    }
+  }
+
+  start() {
+    this.started = true;
+    this.wake();
+  }
+
+  async stop() {
+    this.kill = true;
+
+    if (this.running) {
+      await this.running;
+    }
+
+    this.started = false;
+    this.isActive = false;
+    this.kill = false;
+  }
+
+  async clear() {
+    await this.stop();
+
+    this.stack = [];
+    this.errored = false;
+  }
 }
 
 @Component({
@@ -146,6 +216,8 @@ export class GameComponent implements OnInit {
   private socket: SocketIOClient.Socket = null;
 
   public canvas_size = 512;
+
+  private queue: AnimationQueue = new AnimationQueue();
 
   constructor(private wsService: WsService, private elementRef: ElementRef, private ngZone: NgZone) { }
 
@@ -176,7 +248,7 @@ export class GameComponent implements OnInit {
     this.elementRef.nativeElement.appendChild(this.app.view);
   }
 
-  loadGame(terrain: Tilemap) {
+  async loadGame(terrain: Tilemap) {
     this.app.stage.removeChildren();
 
     // this.terrain.tilemaps.forEach((tilemap, i) => this.generateTilemap(tilemap));
@@ -245,8 +317,42 @@ export class GameComponent implements OnInit {
   }
 
   moveSprite(sprite: PIXI.AnimatedSprite, scale: number, x: number, y: number) {
-    sprite.x = (x + 0.5) * scale;
-    sprite.y = (y + 0.5) * scale;
+    return new Promise((resolve) => {
+      // sprite.x = (x + 0.5) * scale;
+      // sprite.y = (y + 0.5) * scale;
+
+      const destination = {
+        x: (x + 0.5) * scale,
+        y: (y + 0.5) * scale,
+      }
+
+      const speed = 0.05 * scale;
+
+      const id = Math.random();
+
+      const event = (delta: number) => {
+        const move = speed * delta
+
+        if (sprite.x > destination.x) {
+          sprite.x = Math.max(sprite.x - move, destination.x)
+        } else if (sprite.x < destination.x) {
+          sprite.x = Math.min(sprite.x + move, destination.x)
+        }
+
+        if (sprite.y > destination.y) {
+          sprite.y = Math.max(sprite.y - move, destination.y)
+        } else if (sprite.y < destination.y) {
+          sprite.y = Math.min(sprite.y + move, destination.y)
+        }
+
+        if (sprite.x == destination.x && sprite.y == destination.y) {
+          resolve();
+          this.app.ticker.remove(event);
+        }
+      }
+
+      this.app.ticker.add(event);
+    });
   }
 
   generateSprite(tile_settings: TileSettings) {
@@ -260,7 +366,6 @@ export class GameComponent implements OnInit {
 
     const sprite = new PIXI.AnimatedSprite(textures)
 
-    console.log(this.app.ticker.FPS)
     sprite.animationSpeed = isNaN(alternative.speed) ? 1 : alternative.speed;
     sprite.play();
 
@@ -282,10 +387,12 @@ export class GameComponent implements OnInit {
     return textures[Math.floor(Math.random() * textures.length)];
   }
 
-  public run(code: string) {
+  public async run(code: string) {
     if (this.socket) {
       this.socket.disconnect();
     }
+
+    await this.queue.clear();
 
     this.socket = this.wsService.connect('/matchmaking', { test: "true", code, }, {
       reconnection: false,
@@ -293,29 +400,34 @@ export class GameComponent implements OnInit {
 
     let map: Tilemap = null;
 
-    this.socket.on('match found', (data: { map: Tilemap, opponent_username: string, username: string }) => {
+    this.socket.on('match found', async (data: { map: Tilemap, opponent_username: string, username: string }) => {
       map = data.map;
       map.layers.units = Array(map.square_size ** 2).fill(null);
 
-      this.loadGame(map);
-
       console.log(map)
 
-      this.socket.on('spawn', (data) => {
-        console.log('spawn:', data)
+      await this.loadGame(map);
+      this.queue.start();
+    });
 
-        this.handleActions(map, data.actions)
+    this.socket.on('spawn', (data) => {
+      console.log('spawn:', data)
+
+      this.queue.add(async () => {
+        await this.handleActions(map, data.actions)
       });
+    });
 
-      this.socket.on('round actions', (data) => {
-        console.log('round:', data)
+    this.socket.on('round actions', (data) => {
+      console.log('round:', data)
 
-        this.handleActions(map, data.actions)
+      this.queue.add(async () => {
+        await this.handleActions(map, data.actions)
       });
+    });
 
-      this.socket.on('end test phase', (data) => {
-        console.log("test ended")
-      });
+    this.socket.on('end test phase', (data) => {
+      console.log("test ended")
     });
   }
 
@@ -327,6 +439,8 @@ export class GameComponent implements OnInit {
 
   async handleAction(map: Tilemap, action: Action) {
     const { name } = action
+
+    await this.handleEvents(map, action);
 
     if (name == 'spawn') {
       const unit: Unit = {
@@ -345,14 +459,30 @@ export class GameComponent implements OnInit {
     } else if (name == 'walk') {
       const { unit, position } = this.findUnit(map, action.robot_id);
 
-      map.layers.units[action.new_position.x + (action.new_position.y * map.square_size)] = unit
-      map.layers.units[position.x + (position.y * map.square_size)] = null
+      const origin = position.x + (position.y * map.square_size);
+      const destination = action.new_position.x + (action.new_position.y * map.square_size);
+
+      map.layers.units[destination] = unit
+
+      if (destination !== origin) {
+        map.layers.units[origin] = null
+      }
 
       const scale = this.canvas_size / map.square_size;
-      this.moveSprite(unit.sprite, scale, position.x, position.y);
+      await this.moveSprite(unit.sprite, scale, position.x, position.y);
     }
 
-    await sleep(500);
+    await sleep(500)
+  }
+
+  async handleEvents(map: Tilemap, action: Action) {
+    if (action.events) {
+      for (const event of action.events) {
+        if (event.name === 'bumped') {
+          console.log('BUMPED')
+        }
+      }
+    }
   }
 
   findUnit(map: Tilemap, id: string): { unit: Unit, position: { x: number, y: number } } {
@@ -370,10 +500,6 @@ export class GameComponent implements OnInit {
       position.y = Math.floor(i / map.square_size);
 
       break;
-    }
-
-    if (!unit) {
-      console.log(`Unit ${id} not found.`)
     }
 
     return { unit, position };
