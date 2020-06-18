@@ -316,19 +316,20 @@ export class GameComponent implements OnInit {
     return sprite;
   }
 
-  moveSprite(sprite: PIXI.AnimatedSprite, scale: number, x: number, y: number) {
+  moveSprite(sprite: PIXI.AnimatedSprite, scale: number, x: number, y: number, is_jump: boolean = false) {
     return new Promise((resolve) => {
-      // sprite.x = (x + 0.5) * scale;
-      // sprite.y = (y + 0.5) * scale;
-
       const destination = {
         x: (x + 0.5) * scale,
         y: (y + 0.5) * scale,
       }
 
-      const speed = 0.05 * scale;
+      // Shallow copy original scale
+      const original_scale = { x: sprite.scale.x, y: sprite.scale.y }
+      const distance = { x: Math.abs(sprite.x - destination.x), y: Math.abs(sprite.y - destination.y) }
 
-      const id = Math.random();
+      console.log(distance)
+
+      const speed = 0.05 * scale;
 
       const event = (delta: number) => {
         const move = speed * delta
@@ -345,7 +346,15 @@ export class GameComponent implements OnInit {
           sprite.y = Math.min(sprite.y + move, destination.y)
         }
 
+        if (is_jump) {
+          sprite.scale.x = original_scale.x + Math.abs(Math.abs((distance.x / 2) / scale - Math.abs(sprite.x - destination.x) / scale))
+          sprite.scale.y = original_scale.y + Math.abs(Math.abs((distance.y / 2) / scale - Math.abs(sprite.y - destination.y) / scale))
+        }
+
         if (sprite.x == destination.x && sprite.y == destination.y) {
+          sprite.scale.x = original_scale.x
+          sprite.scale.y = original_scale.y
+
           resolve();
           this.app.ticker.remove(event);
         }
@@ -470,6 +479,37 @@ export class GameComponent implements OnInit {
 
       const scale = this.canvas_size / map.square_size;
       await this.moveSprite(unit.sprite, scale, position.x, position.y);
+    } else if (name == 'jump') {
+      const { unit, position } = this.findUnit(map, action.robot_id);
+
+      const origin = position.x + (position.y * map.square_size);
+      const destination = action.new_position.x + (action.new_position.y * map.square_size);
+
+      map.layers.units[destination] = unit
+
+      if (destination !== origin) {
+        map.layers.units[origin] = null
+      }
+
+      const scale = this.canvas_size / map.square_size;
+      await this.moveSprite(unit.sprite, scale, position.x, position.y, true);
+    } else if (name === 'turn-right' || name === 'turn-left') {
+      const { unit } = this.findUnit(map, action.robot_id);
+
+      switch (action.new_orientation) {
+        case "top":
+          unit.sprite.angle = 0;
+          break;
+        case "right":
+          unit.sprite.angle = 90;
+          break;
+        case "down":
+          unit.sprite.angle = 180;
+          break;
+        case "left":
+          unit.sprite.angle = 270;
+          break;
+      }
     }
 
     await sleep(500)
