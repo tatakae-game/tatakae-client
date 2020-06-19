@@ -497,7 +497,7 @@ export class GameComponent implements OnInit {
       const { unit } = this.findUnit(map, action.robot_id);
 
       switch (action.new_orientation) {
-        case "top":
+        case "up":
           unit.sprite.angle = 0;
           break;
         case "right":
