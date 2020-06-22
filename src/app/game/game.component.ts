@@ -403,7 +403,7 @@ export class GameComponent implements OnInit {
 
     await this.queue.clear();
 
-    this.socket = this.wsService.connect('/matchmaking', { test: "true", code, }, {
+    this.socket = this.wsService.connect('/matchmaking', { test: "true", code, language: 'js'}, {
       reconnection: false,
     })
 
