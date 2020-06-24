@@ -16,7 +16,6 @@ interface TileTexture {
 }
 
 interface TileSettings {
-  type: TileType;
   textures?: TileTexture[];
 }
 
@@ -26,7 +25,6 @@ const sleep = (ms: number) => new Promise((resolve) => {
 
 const TILES: { [key: string]: TileSettings } = {
   'grass': {
-    type: TileType.Floor,
     textures: [
       {
         chance: 10,
@@ -40,58 +38,20 @@ const TILES: { [key: string]: TileSettings } = {
         ],
       },
       {
-        chance: 10,
+        chance: 90,
         randomize_angle: false,
         frames: ['/assets/tiles/grass/2/grass.png'],
       },
-      {
-        chance: 80,
-        randomize_angle: false,
-        frames: ['/assets/tiles/grass/3/grass.png'],
-      },
     ],
   },
-  'sand': {
-    type: TileType.Floor,
+  'rock': {
     textures: [
       {
-        frames: ['/assets/tiles/sand/sand.png'],
+        frames: ['/assets/tiles/rock/1/rock.png'],
       },
-    ],
-  },
-  'ruins': {
-    type: TileType.BlockingObstacle,
-    textures: [
-      {
-        frames: ['/assets/tiles/ruins/ruins.png'],
-      },
-    ],
-  },
-  'desert-mountain': {
-    type: TileType.BlockingObstacle,
-    textures: [
-      {
-        frames: ['/assets/tiles/desert-mountain/desert-mountain.png'],
-      },
-    ],
-  },
-  'tree': {
-    type: TileType.BlockingObstacle,
-    textures: [
-      {
-        speed: 0.05,
-        frames: [
-          '/assets/tiles/tree/tree1.png',
-          '/assets/tiles/tree/tree2.png',
-          '/assets/tiles/tree/tree3.png',
-          '/assets/tiles/tree/tree4.png',
-          '/assets/tiles/tree/tree5.png',
-        ],
-      }
     ],
   },
   'robot': {
-    type: TileType.Entity,
     textures: [
       {
         frames: [
@@ -251,8 +211,8 @@ export class GameComponent implements OnInit {
   async loadGame(terrain: Tilemap) {
     this.app.stage.removeChildren();
 
-    // this.terrain.tilemaps.forEach((tilemap, i) => this.generateTilemap(tilemap));
     this.generateGroundTilemap(terrain);
+    this.generateObstaclesTilemap(terrain);
   }
 
   generateGroundTilemap(terrain: Tilemap) {
@@ -270,6 +230,31 @@ export class GameComponent implements OnInit {
         if (!tile) continue;
 
         const sprite = this.renderSprite(TILES[tile], scale, x, y)
+        sprite.zIndex = 1
+
+        container.addChild(sprite);
+      }
+    }
+  }
+
+  generateObstaclesTilemap(terrain: Tilemap) {
+    const obstacles = terrain.layers.obstacles;
+
+    const scale = this.canvas_size / terrain.square_size
+    const container = new PIXI.Container();
+
+    this.app.stage.addChild(container);
+
+    for (let y = 0; y < terrain.square_size; y++) {
+      for (let x = 0; x < terrain.square_size; x++) {
+        const tile = obstacles[x + (y * terrain.square_size)];
+
+        if (!tile) continue;
+
+        console.log(TILES[tile])
+
+        const sprite = this.renderSprite(TILES[tile], scale, x, y)
+        sprite.zIndex = 2
 
         container.addChild(sprite);
       }
@@ -279,6 +264,7 @@ export class GameComponent implements OnInit {
   spawnUnit(terrain: Tilemap, unit: Unit, x: number, y: number): Unit {
     const scale = this.canvas_size / terrain.square_size;
     const sprite = this.renderSprite(TILES['robot'], scale, x, y);
+    sprite.zIndex = 10;
 
     if (unit.orientation == 'up') {
       sprite.angle = 0;
@@ -326,8 +312,6 @@ export class GameComponent implements OnInit {
       // Shallow copy original scale
       const original_scale = { x: sprite.scale.x, y: sprite.scale.y }
       const distance = { x: Math.abs(sprite.x - destination.x), y: Math.abs(sprite.y - destination.y) }
-
-      console.log(distance)
 
       const speed = 0.05 * scale;
 
@@ -403,7 +387,7 @@ export class GameComponent implements OnInit {
 
     await this.queue.clear();
 
-    this.socket = this.wsService.connect('/matchmaking', { test: "true", code, language: 'js'}, {
+    this.socket = this.wsService.connect('/matchmaking', { test: "true", code, language: 'js' }, {
       reconnection: false,
     })
 
@@ -498,16 +482,16 @@ export class GameComponent implements OnInit {
 
       switch (action.new_orientation) {
         case "up":
-          unit.sprite.angle = 0;
+          unit.sprite.angle = 270;
           break;
         case "right":
-          unit.sprite.angle = 90;
+          unit.sprite.angle = 0;
           break;
         case "down":
-          unit.sprite.angle = 180;
+          unit.sprite.angle = 90;
           break;
         case "left":
-          unit.sprite.angle = 270;
+          unit.sprite.angle = 180;
           break;
       }
     }
