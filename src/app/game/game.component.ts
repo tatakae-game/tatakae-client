@@ -80,6 +80,7 @@ interface Layers {
 
 interface Tilemap {
   layers: Layers;
+  obstacles: PIXI.AnimatedSprite[];
   square_size: number;
 }
 
@@ -247,7 +248,8 @@ export class GameComponent implements OnInit {
 
     for (let y = 0; y < terrain.square_size; y++) {
       for (let x = 0; x < terrain.square_size; x++) {
-        const tile = obstacles[x + (y * terrain.square_size)];
+        const index = x + (y * terrain.square_size);
+        const tile = obstacles[index];
 
         if (!tile) continue;
 
@@ -256,6 +258,7 @@ export class GameComponent implements OnInit {
         const sprite = this.renderSprite(TILES[tile], scale, x, y)
         sprite.zIndex = 2
 
+        terrain.obstacles[index] = sprite;
         container.addChild(sprite);
       }
     }
@@ -396,6 +399,7 @@ export class GameComponent implements OnInit {
     this.socket.on('match found', async (data: { map: Tilemap, opponent_username: string, username: string }) => {
       map = data.map;
       map.layers.units = Array(map.square_size ** 2).fill(null);
+      map.obstacles = Array(map.square_size ** 2).fill(null);
 
       console.log(map)
 
@@ -504,6 +508,9 @@ export class GameComponent implements OnInit {
       for (const event of action.events) {
         if (event.name === 'bumped') {
           console.log('BUMPED')
+        } else if (event.name === 'destroy') {
+          const sprite = map.obstacles[event.address.x + (event.address.y * map.square_size)]
+          sprite.destroy();
         }
       }
     }
