@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GameComponent } from 'src/app/game/game.component';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-editor',
@@ -17,9 +18,10 @@ export class EditorComponent implements OnInit {
 
   code = 'robot.walk(2)\n';
 
-  constructor() { }
+  constructor(private userService : UsersService) { }
 
   ngOnInit(): void {
+      console.log(this.userService.getUserCode('js'))
   }
 
 
