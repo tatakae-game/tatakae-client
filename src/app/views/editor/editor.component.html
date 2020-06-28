@@ -2,10 +2,15 @@
   <app-header></app-header>
   <main class="editor">
     <div class="monaco-container">
+      <ul class="files_container">
+      <li *ngFor="let file of files; let i = index" (click)="switchCode(file)">{{file.name}}</li>
+      </ul>
+
       <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
 
       <button (click)="testCode()">Test code</button>
     </div>
+
 
     <app-game></app-game>
   </main>
