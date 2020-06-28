@@ -23,6 +23,6 @@ export class WsService {
   }
 
   prepare_data(encapsulator): string { 
-    return encodeURI(JSON.stringify(encapsulator))
+    return btoa(JSON.stringify(encapsulator))
   }
 }
