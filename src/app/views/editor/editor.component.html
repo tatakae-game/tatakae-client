@@ -8,7 +8,13 @@
 
       <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
 
-      <button (click)="testCode()">Test code</button>
+      <div>
+        <button (click)="testCode()">Test code</button>
+        <button (click)="saveCode()">Save</button>
+        <button (click)="setEntrypoint()">Set file as entrypoint</button>
+      </div>
+
+
     </div>
 
 

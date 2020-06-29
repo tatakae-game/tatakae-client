@@ -42,4 +42,15 @@ export class EditorComponent implements OnInit {
     this.displayed.code = this.code;
     this.game.run(this.files, 'js');
   }
+
+  async saveCode() {
+    this.displayed.code = this.code;
+    const res = await this.userService.saveCode(this.files, 'js')
+    console.log(res)
+  }
+
+  setEntrypoint() { 
+    this.files.forEach(file => file.is_entrypoint = false)
+    this.displayed.is_entrypoint = true
+  }
 }
