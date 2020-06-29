@@ -419,8 +419,8 @@ export class GameComponent implements OnInit {
       });
     });
 
-    this.socket.on('error', (data) => {
-      console.log(data.errors)
+    this.socket.on('err', (data) => {
+      console.log(data.error)
     })
 
     this.socket.on('round actions', (data) => {
