@@ -19,7 +19,7 @@ export class EditorComponent implements OnInit {
 
   language: string;
   code: string;
-  public files: [CodeFile];
+  public files: CodeFile[];
   public displayed: CodeFile
 
   constructor(private userService: UsersService) { }
@@ -62,5 +62,24 @@ export class EditorComponent implements OnInit {
   storeInCache() {
     this.displayed.code = this.code
     localStorage.setItem(`${this.language}_code`, btoa(JSON.stringify(this.files)))
+  }
+
+  renameFile(file: CodeFile) {
+    file.name = "renamed"
+  }
+
+
+  deleteFile() {
+    if(this.files.length <= 1) {
+      return console.log(`can't delete last file`)
+    }
+
+    this.files = this.files.filter(file => file !== this.displayed)
+    if(this.files.filter(file => file.is_entrypoint).length === 0) { 
+      this.files[0].is_entrypoint = true
+    }
+
+    this.displayed = this.files[0]
+    this.code = this.displayed.code
   }
 }
