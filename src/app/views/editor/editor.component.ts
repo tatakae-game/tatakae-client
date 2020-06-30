@@ -17,14 +17,16 @@ export class EditorComponent implements OnInit {
   @ViewChild(GameComponent)
   game: GameComponent;
 
+  language: string;
   code: string;
   public files: [CodeFile];
   public displayed: CodeFile
 
-  constructor(private userService : UsersService) { }
+  constructor(private userService: UsersService) { }
 
   async ngOnInit() {
-    this.files = await this.userService.getUserCode('js');
+    this.language = await this.userService.getRunningLanguage();
+    this.files = await this.userService.getUserCode(this.language);
     this.displayed = this.files.filter(file => file.is_entrypoint)[0];
     this.code = this.displayed.code;
   }
@@ -33,24 +35,32 @@ export class EditorComponent implements OnInit {
     this.displayed.code = this.code;
     this.displayed = file;
     this.code = this.displayed.code;
-    console.log(file.code);
-    console.log(this.files);
   }
 
 
   testCode() {
     this.displayed.code = this.code;
-    this.game.run(this.files, 'js');
+    this.game.run(this.files, this.language);
   }
 
   async saveCode() {
     this.displayed.code = this.code;
-    const res = await this.userService.saveCode(this.files, 'js')
+    const res = await this.userService.saveCode(this.files, this.language)
+    
+    if (res) {
+      localStorage.removeItem(`${this.language}_code`)
+    }
     console.log(res)
   }
 
-  setEntrypoint() { 
+  setEntrypoint() {
     this.files.forEach(file => file.is_entrypoint = false)
     this.displayed.is_entrypoint = true
+    localStorage.setItem(`${this.language}_code`, btoa(JSON.stringify(this.files)))
+  }
+
+  storeInCache() {
+    this.displayed.code = this.code
+    localStorage.setItem(`${this.language}_code`, btoa(JSON.stringify(this.files)))
   }
 }

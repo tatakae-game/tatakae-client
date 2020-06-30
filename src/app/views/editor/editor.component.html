@@ -6,7 +6,8 @@
       <li *ngFor="let file of files; let i = index" (click)="switchCode(file)">{{file.name}}</li>
       </ul>
 
-      <ngx-monaco-editor class="monaco-editor" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
+      <ngx-monaco-editor 
+      class="monaco-editor" (keyup)="storeInCache()" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
 
       <div>
         <button (click)="testCode()">Test code</button>

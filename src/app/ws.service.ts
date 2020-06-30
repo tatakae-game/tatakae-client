@@ -17,8 +17,6 @@ export class WsService {
     const queries = Object.keys(query).map(key => `${key}=${query[key]}`).join('&');
     const queryString = queries ? `&${queries}` : '';
 
-    console.log(`${config.api_url}${path}?token=${session.token}${queryString}`)
-
     return io(`${config.api_url}${path}?token=${session.token}${queryString}`, options);
   }
 
