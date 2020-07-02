@@ -102,6 +102,8 @@ export class EditorComponent implements OnInit {
 
     this.displayed = this.files[0]
     this.code = this.displayed.code
+
+    this.storeInCache()
   }
 
   renameFile(file: CodeFile, input: KeyboardEvent) {

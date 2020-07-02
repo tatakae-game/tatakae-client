@@ -4,13 +4,13 @@
     <div class="monaco-container">
       <ul class="files_container">
         <li *ngFor="let file of files; let i = index;" (click)="switchCode(file)" (dblclick)="file.changeText=true"
-          (keyup.enter)="file.changeText=false" (keyup.escape)="file.changeText=false">
+          (keyup.enter)="file.changeText=false" (keyup.escape)="file.changeText=false" [ngClass]="file.is_entrypoint ? 'entrypoint-class' : 'file-class'">
           <input *ngIf="file.changeText===true" type="text" value="{{file.name}}" (keyup)="renameFile(file, $event)"
             focus="true">
           <span *ngIf="file.changeText===false" name="file.name">{{file.name}}</span>
 
         </li>
-        <li (click)="addFile()">+</li>
+        <li (click)="addFile()" class="file-class">+</li>
       </ul>
 
       <ngx-monaco-editor class="monaco-editor" (keyup)="storeInCache()" [options]="editorOptions" [(ngModel)]="code">
