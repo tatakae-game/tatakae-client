@@ -17,6 +17,7 @@ export class EditorComponent implements OnInit {
   @ViewChild(GameComponent)
   game: GameComponent;
 
+  modifiedName: string;
   language: string;
   code: string;
   public files: CodeFile[];
@@ -37,9 +38,9 @@ export class EditorComponent implements OnInit {
     this.code = this.displayed.code;
   }
 
-
   testCode() {
     this.displayed.code = this.code;
+    console.log(this.files)
     this.game.run(this.files, this.language);
   }
 
@@ -64,8 +65,24 @@ export class EditorComponent implements OnInit {
     localStorage.setItem(`${this.language}_code`, btoa(JSON.stringify(this.files)))
   }
 
-  renameFile(file: CodeFile) {
-    file.name = "renamed"
+  addFile() {
+    this.displayed.code = this.code
+
+    const new_file = {} as CodeFile
+    new_file.code = ''
+    new_file.is_entrypoint = false
+
+    let number = this.files.length
+
+    while (`file${number}.js` in this.files) {
+      number++
+    }
+
+    new_file.name = `file${number}.js`
+    this.files.push(new_file)
+
+    this.displayed = new_file
+    this.code = this.displayed.code
   }
 
 
@@ -81,5 +98,10 @@ export class EditorComponent implements OnInit {
 
     this.displayed = this.files[0]
     this.code = this.displayed.code
+  }
+
+  renameFile(file: CodeFile, input: KeyboardEvent) {
+    file.name = input.target["value"]
+    this.storeInCache();
   }
 }

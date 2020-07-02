@@ -3,15 +3,18 @@
   <main class="editor">
     <div class="monaco-container">
       <ul class="files_container">
-        <li *ngFor="let file of files; let i = index" (click)="switchCode(file)">{{file.name}}
-          <input type="button" class="rename" (click)="renameFile(file)"></li>
-        <li>+</li>
+        <li *ngFor="let file of files; let i = index;" (click)="switchCode(file)" (dblclick)="file.changeText=true" (keyup.enter)="file.changeText=false" (keyup.escape)="file.changeText=false">
+          <input *ngIf="file.changeText" type="text" value="{{file.name}}" (keyup)="renameFile(file, $event)" focus="true">
+          <span *ngIf="!file.changeText" type="text" name="file.name">{{file.name}}</span>
+
+        </li>
+        <li (click)="addFile()">+</li>
       </ul>
 
       <ngx-monaco-editor class="monaco-editor" (keyup)="storeInCache()" [options]="editorOptions" [(ngModel)]="code">
       </ngx-monaco-editor>
 
-      <div>
+      <div class="action-container">
         <button (click)="testCode()">Test code</button>
         <button (click)="saveCode()">Save</button>
         <button (click)="setEntrypoint()">Set file as entrypoint</button>
