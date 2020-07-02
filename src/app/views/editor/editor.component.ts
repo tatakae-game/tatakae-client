@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+
 import { GameComponent } from 'src/app/game/game.component';
 import { UsersService } from 'src/app/services/users.service';
 import { CodeFile } from 'src/app/models/code_file.model';
@@ -74,15 +75,17 @@ export class EditorComponent implements OnInit {
 
     let number = this.files.length
 
-    while (`file${number}.js` in this.files) {
+    while (this.files.map(file => file.name).includes(`file${number}.js`)) {
       number++
     }
 
-    new_file.name = `file${number}.js`
+    new_file.name = `file${number}.js`;
     this.files.push(new_file)
 
-    this.displayed = new_file
-    this.code = this.displayed.code
+    this.displayed = new_file;
+    this.code = this.displayed.code;
+
+    new_file.changeText = true;
   }
 
 
@@ -101,7 +104,11 @@ export class EditorComponent implements OnInit {
   }
 
   renameFile(file: CodeFile, input: KeyboardEvent) {
-    file.name = input.target["value"]
+    const new_filename: string = input.target["value"]
+    if(new_filename.trim() === '' ) {
+      return
+    }
+    file.name = new_filename
     this.storeInCache();
   }
 }
