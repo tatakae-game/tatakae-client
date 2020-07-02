@@ -29,6 +29,7 @@ export class EditorComponent implements OnInit {
   async ngOnInit() {
     this.language = await this.userService.getRunningLanguage();
     this.files = await this.userService.getUserCode(this.language);
+    this.files.forEach(file => file.changeText = false)
     this.displayed = this.files.filter(file => file.is_entrypoint)[0];
     this.code = this.displayed.code;
   }
