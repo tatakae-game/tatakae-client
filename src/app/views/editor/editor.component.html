@@ -2,9 +2,15 @@
   <app-header></app-header>
   <main class="editor">
     <div class="monaco-container">
+      <mat-button-toggle-group class="files_container">
+        <mat-button-toggle value="bold" (click)="getCode('js')">JS</mat-button-toggle>
+        <mat-button-toggle value="italic" (click)="getCode('san')">SAN</mat-button-toggle>
+      </mat-button-toggle-group>
+
       <ul class="files_container">
         <li *ngFor="let file of files; let i = index;" (click)="switchCode(file)" (dblclick)="file.changeText=true"
-          (keyup.enter)="file.changeText=false" (keyup.escape)="file.changeText=false" [ngClass]="file.is_entrypoint ? 'entrypoint-class' : 'file-class'">
+          (keyup.enter)="file.changeText=false" (keyup.escape)="file.changeText=false"
+          [ngClass]="file.is_entrypoint ? 'entrypoint-class' : 'file-class'">
           <input *ngIf="file.changeText===true" type="text" value="{{file.name}}" (keyup)="renameFile(file, $event)"
             focus="true">
           <span *ngIf="file.changeText===false" name="file.name">{{file.name}}</span>

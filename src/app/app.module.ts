@@ -25,6 +25,8 @@ import { UserControlComponent } from './user-control/user-control.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
 import { PlayComponent } from './views/play/play.component';
 
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,6 +48,7 @@ import { PlayComponent } from './views/play/play.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    MatButtonToggleModule,
     FontAwesomeModule,
     TooltipModule,
     MonacoEditorModule.forRoot(),

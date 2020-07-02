@@ -28,6 +28,10 @@ export class EditorComponent implements OnInit {
 
   async ngOnInit() {
     this.language = await this.userService.getRunningLanguage();
+    this.instantiate_code(this.language)
+  }
+
+  async instantiate_code(language: string) {
     this.files = await this.userService.getUserCode(this.language);
     this.files.forEach(file => file.changeText = false)
     this.displayed = this.files.filter(file => file.is_entrypoint)[0];
@@ -113,5 +117,19 @@ export class EditorComponent implements OnInit {
     }
     file.name = new_filename
     this.storeInCache();
+  }
+
+  async getCode(language: string ) {
+    if(this.language === language) {
+      return
+    }
+
+    this.language = language
+
+    console.log(this.language)
+
+    console.log(language)
+
+    this.instantiate_code(language)
   }
 }
