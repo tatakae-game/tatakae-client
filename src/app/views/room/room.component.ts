@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, AfterViewInit } from '@angular/core';
+
 
 import { WsService } from 'src/app/ws.service';
 import { AuthService } from 'src/app/auth.service';
@@ -7,7 +9,9 @@ import { Message } from 'src/app/models/message.model';
 import { Session } from 'src/app/models/session.model';
 
 import { faImages, faPlay, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { RoomsService } from 'src/app/rooms.service';
@@ -15,7 +19,9 @@ import { UsersService } from 'src/app/services/users.service';
 
 import { Room } from 'src/app/models/room.model';
 import { User } from 'src/app/models/user.model';
+
 import { NotifierService } from 'angular-notifier';
+
 
 @Component({
   selector: 'app-room',
@@ -42,17 +48,20 @@ export class RoomComponent implements OnInit, AfterViewInit {
 
   searchedUsers: User[] = [];
 
+
   isSupportPage: boolean;
 
   constructor(
     private wsService: WsService,
     private authService: AuthService,
     private route: ActivatedRoute,
+
     private router: Router,
     private formBuilder: FormBuilder,
     private roomsService: RoomsService,
     private usersService: UsersService,
     private notifierService: NotifierService,
+
   ) {
     this.messageForm = this.formBuilder.group({
       message: ['', Validators.required],
@@ -67,13 +76,14 @@ export class RoomComponent implements OnInit, AfterViewInit {
 
     this.isSupportPage = this.router.url.includes('support');
 
+
+  async ngOnInit() {
     this.session = this.authService.session();
     const id = this.route.snapshot.paramMap.get('id');
 
     this.socket = this.wsService.connect(`/chat`, {
       room: id,
     });
-
     await this.getRoom();
 
     const messages = this.room.messages.map(message => ({
@@ -140,6 +150,16 @@ export class RoomComponent implements OnInit, AfterViewInit {
     } catch (error) {
       this.notifierService.notify('error', error.message);
     }
+  }
+
+  async onInviteSubmit(data: any) {
+    const res = await this.roomsService.addUser(this.room.id, data.user)
+    console.log(res)
+  }
+
+  async onInviteUserUpdate(value: string) {
+    const users = await this.usersService.searchUsers(value);
+    this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
   }
 
   sanitizeDate(date: Date): string {

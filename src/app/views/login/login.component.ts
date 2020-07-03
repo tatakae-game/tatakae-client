@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
     from(this.authService.login(data.username, data.password)).pipe(first()).subscribe(
       res => {
         if (res?.success) {
-          this.router.navigate(['/editor']);
+          this.router.navigate(['/editor']); 
         } else if (res?.errors) {
           res.errors.forEach((err) => {
             this.notifierService.notify('error', err);

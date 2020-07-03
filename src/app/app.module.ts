@@ -23,6 +23,9 @@ import { HomeComponent } from './views/home/home.component';
 import { RoomComponent } from './views/room/room.component';
 import { UserControlComponent } from './user-control/user-control.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
+import { PlayComponent } from './views/play/play.component';
+
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
 import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
 import { MaterialModule } from './modules/material.module';
@@ -41,6 +44,7 @@ import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-gro
     RoomComponent,
     UserControlComponent,
     RoomsComponent,
+    PlayComponent,
     DashboardAdminComponent,
     PermissionGroupsComponent,
     PermissionsGroupDialogComponent,
@@ -51,6 +55,7 @@ import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-gro
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    MatButtonToggleModule,
     FontAwesomeModule,
     TooltipModule,
     MaterialModule,

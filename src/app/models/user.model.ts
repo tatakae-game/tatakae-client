@@ -3,4 +3,5 @@ export interface User {
     username: string;
     email?: string;
     created?: Date;
+    running_language: string;
 }

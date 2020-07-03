@@ -23,7 +23,6 @@ export class RoomsComponent implements OnInit {
   redirectToUrl: string;
   searchedUsers: User[] = [];
   session: Session;
-
   constructor(private roomService: RoomsService,
     private router: Router,
     private formBuilder: FormBuilder,

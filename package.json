@@ -12,12 +12,12 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^9.0.5",
-    "@angular/cdk": "^9.2.1",
+    "@angular/cdk": "^9.2.4",
     "@angular/common": "^9.0.5",
     "@angular/compiler": "^9.0.5",
     "@angular/core": "^9.0.5",
     "@angular/forms": "^9.0.5",
-    "@angular/material": "^9.2.1",
+    "@angular/material": "^9.2.4",
     "@angular/platform-browser": "^9.0.5",
     "@angular/platform-browser-dynamic": "^9.0.5",
     "@angular/router": "^9.0.5",
@@ -28,6 +28,7 @@
     "ng2-tooltip-directive": "^2.9.20",
     "ngx-monaco-editor": "^8.1.1",
     "normalize.css": "^8.0.1",
+    "pixi.js": "^5.2.1",
     "rxjs": "~6.5.4",
     "socket.io-client": "^2.3.0",
     "tslib": "^1.11.1",
@@ -35,7 +36,7 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.900.5",
+    "@angular-devkit/build-angular": "^0.901.7",
     "@angular/cli": "^9.0.5",
     "@angular/compiler-cli": "^9.0.5",
     "@angular/language-service": "^9.0.5",
