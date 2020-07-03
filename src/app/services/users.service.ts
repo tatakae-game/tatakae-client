@@ -18,7 +18,6 @@ export class UsersService {
     try {
       const res = await this.http.get<ApiResponse>(`${config.api_url}/users/${id}`).toPromise();
       return res.profile
-
     } catch {
       return null;
     }
@@ -28,12 +27,11 @@ export class UsersService {
     try {
       const res = await this.http.get<ApiResponse>(`${config.api_url}/users/search?username=${username}`).toPromise();
       return res.users
-
     } catch {
       return null;
     }
   }
-
+  
   async getMe(): Promise<any> {
     try {
       const session = this.session()

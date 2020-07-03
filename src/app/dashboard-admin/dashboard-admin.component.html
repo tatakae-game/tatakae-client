@@ -1,0 +1,34 @@
+<div class="container">
+    <header>
+        <img routerLink="/dashboard" src="/assets/logo.png" alt="">
+        <nav>
+            <ul>
+                <li>
+                    <a [ngClass]="router.url === '/dashboard/groups' ? 'active' : ''" routerLink="/dashboard/groups">Permission Groups</a>
+                </li>
+                <li>
+                    <a [ngClass]="router.url === '/dashboard/tickets' ? 'active' : ''" routerLink="/dashboard/tickets">Tickets</a>
+                </li>
+                <li>
+                    <a [ngClass]="router.url === '/dashboard/stats' ? 'active' : ''" routerLink="/dashboard/stats">Stats</a>
+                </li>
+                <li>
+                    <a routerLink="/dashboard">...</a>
+                </li>
+                
+                <hr>
+
+                <li>
+                    <a routerLink="/editor">Back to website</a>
+                </li>
+                <li>
+                    <a class="logout" (click)="logout()">Logout</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="component-container">
+        <ng-content></ng-content>
+    </div>
+</div>

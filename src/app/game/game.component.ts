@@ -166,7 +166,6 @@ class AnimationQueue {
     this.stack = [];
     this.errored = false;
   }
-}
 
 @Component({
   selector: 'app-game',

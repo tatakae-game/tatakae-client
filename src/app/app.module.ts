@@ -26,6 +26,10 @@ import { RoomsComponent } from './views/rooms/rooms.component';
 import { PlayComponent } from './views/play/play.component';
 
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
+import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
+import { MaterialModule } from './modules/material.module';
+import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-groups-dialog/permissions-groups-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +45,9 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     UserControlComponent,
     RoomsComponent,
     PlayComponent,
+    DashboardAdminComponent,
+    PermissionGroupsComponent,
+    PermissionsGroupDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +58,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatButtonToggleModule,
     FontAwesomeModule,
     TooltipModule,
+    MaterialModule,
     MonacoEditorModule.forRoot(),
     NotifierModule.withConfig({
       position: {
