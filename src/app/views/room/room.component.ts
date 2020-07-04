@@ -73,11 +73,6 @@ export class RoomComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-
-    this.isSupportPage = this.router.url.includes('support');
-
-
-  async ngOnInit() {
     this.session = this.authService.session();
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -150,16 +145,6 @@ export class RoomComponent implements OnInit, AfterViewInit {
     } catch (error) {
       this.notifierService.notify('error', error.message);
     }
-  }
-
-  async onInviteSubmit(data: any) {
-    const res = await this.roomsService.addUser(this.room.id, data.user)
-    console.log(res)
-  }
-
-  async onInviteUserUpdate(value: string) {
-    const users = await this.usersService.searchUsers(value);
-    this.searchedUsers = users.filter(user => !this.room.users.includes(user.id));
   }
 
   sanitizeDate(date: Date): string {
