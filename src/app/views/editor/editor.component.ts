@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { GameComponent } from 'src/app/game/game.component';
 import { UsersService } from 'src/app/services/users.service';
-import { CodeFile } from 'src/app/models/code_file.model';
+import { CodeFile, GenerateCodeFile } from 'src/app/models/code_file.model';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-editor',
@@ -24,7 +25,7 @@ export class EditorComponent implements OnInit {
   public files: CodeFile[];
   public displayed: CodeFile
 
-  constructor(private userService: UsersService) { }
+  constructor(private userService: UsersService, private notifierService: NotifierService) { }
 
   async ngOnInit() {
     this.language = await this.userService.getRunningLanguage();
@@ -33,8 +34,12 @@ export class EditorComponent implements OnInit {
 
   async instantiate_code(language: string) {
     this.files = await this.userService.getUserCode(this.language);
+    if (this.files === null) {
+      this.files = [GenerateCodeFile()];
+    }
     this.files.forEach(file => file.changeText = false)
-    this.displayed = this.files.filter(file => file.is_entrypoint)[0];
+    const entrypoint = this.files.filter(file => file.is_entrypoint)[0];
+    this.displayed = entrypoint;
     this.code = this.displayed.code;
   }
 
@@ -53,7 +58,7 @@ export class EditorComponent implements OnInit {
   async saveCode() {
     this.displayed.code = this.code;
     const res = await this.userService.saveCode(this.files, this.language)
-    
+
     if (res) {
       localStorage.removeItem(`${this.language}_code`)
     }
@@ -80,11 +85,11 @@ export class EditorComponent implements OnInit {
 
     let number = this.files.length
 
-    while (this.files.map(file => file.name).includes(`file${number}.js`)) {
+    while (this.files.map(file => file.name).includes(`file${number}.${this.language}`)) {
       number++
     }
 
-    new_file.name = `file${number}.js`;
+    new_file.name = `file${number}.${this.language}`;
     this.files.push(new_file)
 
     this.displayed = new_file;
@@ -95,12 +100,12 @@ export class EditorComponent implements OnInit {
 
 
   deleteFile() {
-    if(this.files.length <= 1) {
+    if (this.files.length <= 1) {
       return console.log(`can't delete last file`)
     }
 
     this.files = this.files.filter(file => file !== this.displayed)
-    if(this.files.filter(file => file.is_entrypoint).length === 0) { 
+    if (this.files.filter(file => file.is_entrypoint).length === 0) {
       this.files[0].is_entrypoint = true
     }
 
@@ -112,15 +117,15 @@ export class EditorComponent implements OnInit {
 
   renameFile(file: CodeFile, input: KeyboardEvent) {
     const new_filename: string = input.target["value"]
-    if(new_filename.trim() === '' ) {
+    if (new_filename.trim() === '') {
       return
     }
     file.name = new_filename
     this.storeInCache();
   }
 
-  async getCode(language: string ) {
-    if(this.language === language) {
+  async getCode(language: string) {
+    if (this.language === language) {
       return
     }
 
