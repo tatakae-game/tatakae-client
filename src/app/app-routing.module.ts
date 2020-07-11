@@ -13,6 +13,7 @@ import { RoomComponent } from './views/room/room.component';
 import { RoomsComponent } from './views/rooms/rooms.component';
 import { PlayComponent } from './views/play/play.component';
 import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
+import { UserPageComponent } from './views/user-page/user-page.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [NoAuthGuard], },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'chat', component: RoomsComponent, canActivate: [AuthGuard], },
   { path: 'chat/room/:id', component: RoomComponent, canActivate: [AuthGuard], },
   { path: 'support', component: RoomsComponent, canActivate: [AuthGuard], },
+  { path: 'user', component: UserPageComponent, canActivate: [AuthGuard], },
   { path: 'support/ticket/:id', component: RoomComponent, canActivate: [AuthGuard], },
   { path: 'editor', component: EditorComponent, canActivate: [AuthGuard], },
   { path: 'play', component: PlayComponent, canActivate: [AuthGuard], },
