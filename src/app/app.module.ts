@@ -26,6 +26,8 @@ import { RoomsComponent } from './views/rooms/rooms.component';
 import { PlayComponent } from './views/play/play.component';
 
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MatButtonModule} from '@angular/material/button'; 
+
 import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
 import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
 import { MaterialModule } from './modules/material.module';
@@ -56,6 +58,7 @@ import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-gro
     FormsModule,
     ReactiveFormsModule,
     MatButtonToggleModule,
+    MatButtonModule,
     FontAwesomeModule,
     TooltipModule,
     MaterialModule,
