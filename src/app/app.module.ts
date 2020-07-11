@@ -32,6 +32,7 @@ import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.compo
 import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
 import { MaterialModule } from './modules/material.module';
 import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-groups-dialog/permissions-groups-dialog.component';
+import { UserPageComponent } from './views/user-page/user-page.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-gro
     DashboardAdminComponent,
     PermissionGroupsComponent,
     PermissionsGroupDialogComponent,
+    UserPageComponent,
   ],
   imports: [
     BrowserModule,
