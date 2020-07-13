@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { UsersService } from 'src/app/services/users.service';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-user-page',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserPageComponent implements OnInit {
 
-  constructor() { }
+  user: User;
 
-  ngOnInit(): void {
+  constructor(private userService: UsersService ) { }
+
+  async ngOnInit(): Promise<void> {
+    this.user = await this.userService.getMe()
+  }
+
+  update_default_language(selected_language: string){
+    this.userService.update_user_language(selected_language)
   }
 
 }

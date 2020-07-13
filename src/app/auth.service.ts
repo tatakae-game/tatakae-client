@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { map } from 'rxjs/operators';
-
 import config from './config';
 import { ApiResponse } from './api-response';
 import { Session } from './models/session.model';
-import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -39,19 +36,8 @@ export class AuthService {
 
   async login(username: string, password: string): Promise<ApiResponse> {
     const login = await this.http.post<ApiResponse>(`${config.api_url}/auth/login`, { username, password }).toPromise();
-
     if (login?.success) {
-      const me = await this.http.get<ApiResponse>(`${config.api_url}/users/me?token=${login.token}`).toPromise();
-
-      if (me?.success) {
-        const session = JSON.stringify({
-          token: login.token,
-          user: me.profile,
-        });
-
-        localStorage.setItem('session', btoa(session));
-      }
-
+      const me =  this.lazy_load_session(login.token);
       return me;
     }
 
@@ -64,6 +50,32 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('session');
+  }
+
+  async lazy_load_session(token) {
+    try {
+      console.log('try request')
+      let me
+      if(await this.isLogged()){
+        me = await this.http.get<ApiResponse>(`${config.api_url}/users/me`).toPromise();
+      } else {
+        me = await this.http.get<ApiResponse>(`${config.api_url}/users/me?token=${token}`).toPromise();
+      }
+      console.log(me)
+
+      if (me?.success) {
+        const session = JSON.stringify({
+          token: token,
+          user: me.profile,
+        });
+
+        localStorage.setItem('session', btoa(session));
+      }
+
+      return me;
+    } catch {
+      return 
+    }
   }
 
   session(): Session {

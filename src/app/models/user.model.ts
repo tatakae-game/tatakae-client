@@ -4,4 +4,5 @@ export interface User {
     email?: string;
     created?: Date;
     running_language: string;
+    robot: string;
 }

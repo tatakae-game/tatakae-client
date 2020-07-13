@@ -7,12 +7,13 @@ import { Session } from '../models/session.model';
 import { ApiResponse } from '../api-response';
 import { CodeFile } from '../models/code_file.model';
 import { User } from '../models/user.model';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   async getUser(id: string) {
     try {
@@ -31,7 +32,7 @@ export class UsersService {
       return null;
     }
   }
-  
+
   async getMe(): Promise<any> {
     try {
       const session = this.session()
@@ -54,7 +55,7 @@ export class UsersService {
 
   async getUserCode(type: String) {
     const cached_code = localStorage.getItem(`${type}_code`)
-    
+
     if (cached_code) {
       return JSON.parse(atob(cached_code))
     }
@@ -79,6 +80,18 @@ export class UsersService {
 
     } catch {
       return [];
+    }
+  }
+
+  async update_user_language(language: string) {
+    try {
+      const res = await this.http.put<ApiResponse>(`${config.api_url}/user/language`, {
+        language,
+      }).toPromise();
+      this.authService.lazy_load_session(this.session().token)
+
+    } catch {
+      return 'an error occured';
     }
   }
 
