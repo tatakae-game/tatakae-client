@@ -26,14 +26,14 @@ import { RoomsComponent } from './views/rooms/rooms.component';
 import { PlayComponent } from './views/play/play.component';
 
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import {MatButtonModule} from '@angular/material/button'; 
+import { MatButtonModule } from '@angular/material/button';
 
 import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
 import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
 import { MaterialModule } from './modules/material.module';
 import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-groups-dialog/permissions-groups-dialog.component';
 import { UserPageComponent } from './views/user-page/user-page.component';
-
+import { MatSelectModule } from '@angular/material/select';
 @NgModule({
   declarations: [
     AppComponent,
@@ -61,6 +61,7 @@ import { UserPageComponent } from './views/user-page/user-page.component';
     ReactiveFormsModule,
     MatButtonToggleModule,
     MatButtonModule,
+    MatSelectModule,
     FontAwesomeModule,
     TooltipModule,
     MaterialModule,
