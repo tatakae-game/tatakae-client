@@ -12,8 +12,8 @@
                 </li>
                 <li>
                     <div>Default running language : <mat-form-field appearance="fill">
-                            <mat-label>Available language</mat-label>
-                            <mat-select [(value)]="user.running_language" color='red'>
+                            <mat-label>Available languages</mat-label>
+                            <mat-select [(value)]="user.running_language">
                                 <mat-option value="js" (click)="update_default_language('js')">js</mat-option>
                                 <mat-option value="san" (click)="update_default_language('san')">san</mat-option>
                             </mat-select>
