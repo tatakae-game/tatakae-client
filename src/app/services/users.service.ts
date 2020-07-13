@@ -95,6 +95,20 @@ export class UsersService {
     }
   }
 
+  async update_password(password: string, newPassword: string) {
+    try {
+      console.log('popo' + password, newPassword)
+      const res = await this.http.put<ApiResponse>(`${config.api_url}/user/password`, {
+        password, 
+        new_password: newPassword,
+      }).toPromise();
+      console.log(res)
+
+    } catch {
+      return 'an error occured';
+    }
+  }
+
   session(): Session {
     const session = localStorage.getItem('session')
 

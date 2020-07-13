@@ -34,6 +34,7 @@ import { MaterialModule } from './modules/material.module';
 import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-groups-dialog/permissions-groups-dialog.component';
 import { UserPageComponent } from './views/user-page/user-page.component';
 import { MatSelectModule } from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input'; 
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,6 +63,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatButtonToggleModule,
     MatButtonModule,
     MatSelectModule,
+    MatInputModule,
     FontAwesomeModule,
     TooltipModule,
     MaterialModule,

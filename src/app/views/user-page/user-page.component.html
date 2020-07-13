@@ -3,24 +3,33 @@
     <main>
         <div>
             <h2>Player {{user.username}}</h2>
-            <ul>
-                <li>
-                    <div>User name : {{user.username}}</div>
-                </li>
-                <li>
-                    <div>User robot : {{user.robot}}</div>
-                </li>
-                <li>
-                    <div>Default running language : <mat-form-field appearance="fill">
-                            <mat-label>Available languages</mat-label>
-                            <mat-select [(value)]="user.running_language">
-                                <mat-option value="js" (click)="update_default_language('js')">js</mat-option>
-                                <mat-option value="san" (click)="update_default_language('san')">san</mat-option>
-                            </mat-select>
-                        </mat-form-field>
+            <div>
+                <div>User name : {{user.username}}</div>
+                <div>User robot : {{user.robot}}</div>
+                <div>Default running language : <mat-form-field appearance="fill">
+                        <mat-label>Available languages</mat-label>
+                        <mat-select [(value)]="user.running_language">
+                            <mat-option value="js" (click)="update_default_language('js')">js</mat-option>
+                            <mat-option value="san" (click)="update_default_language('san')">san</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit(changePasswordForm.value)">
+                    <h3>Change password</h3>
+                    <div class="form-entry">
+                        <label for="newPassword">New password</label>
+                        <input id="newPassword" type="password" formControlName="newPassword" required>
                     </div>
-                </li>
-            </ul>
+                    <div class="form-entry">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" formControlName="password" required>
+                    </div>
+                    <div class="bottom">
+                        <button class="button" type="submit">Change password</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </main>
 </app-user-control>
