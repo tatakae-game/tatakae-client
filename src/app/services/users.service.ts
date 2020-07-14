@@ -71,16 +71,10 @@ export class UsersService {
     }
   }
 
-  async saveCode(files: CodeFile[], language: string) {
-
-    try {
-      const session = this.session()
-      const res = await this.http.put<ApiResponse>(`${config.api_url}/users/${session.user.id}/code`, { files, language }).toPromise();
-      return res.success
-
-    } catch {
-      return [];
-    }
+  async saveCode(files: CodeFile[], language: string): Promise<ApiResponse> {
+    const session = this.session();
+    const res = await this.http.put<ApiResponse>(`${config.api_url}/users/${session.user.id}/code`, { files, language }).toPromise();
+    return res;
   }
 
   async update_user_language(language: string) {
@@ -99,7 +93,7 @@ export class UsersService {
     try {
       console.log('popo' + password, newPassword)
       const res = await this.http.put<ApiResponse>(`${config.api_url}/user/password`, {
-        password, 
+        password,
         new_password: newPassword,
       }).toPromise();
       console.log(res)
