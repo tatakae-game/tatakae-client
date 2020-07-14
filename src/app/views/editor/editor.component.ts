@@ -51,7 +51,6 @@ export class EditorComponent implements OnInit {
 
   testCode() {
     this.displayed.code = this.code;
-    console.log(this.files)
     this.game.run(this.files, this.language);
   }
 
@@ -62,7 +61,8 @@ export class EditorComponent implements OnInit {
     if (res) {
       localStorage.removeItem(`${this.language}_code`)
     }
-    console.log(res)
+    
+    this.notifierService.notify((res.success === true ? 'success' : 'error'), res.errors[0]);
   }
 
   setEntrypoint() {
