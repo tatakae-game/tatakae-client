@@ -131,10 +131,6 @@ export class EditorComponent implements OnInit {
 
     this.language = language
 
-    console.log(this.language)
-
-    console.log(language)
-
     this.instantiate_code(language)
   }
 }
