@@ -37,6 +37,10 @@ export class UsersService {
     const me = await this.getMe();
     const admins = await this.getAdministrators();
 
+    if (admins === null) {
+      return false;
+    }
+
     let isAdmin = false;
 
     for (const admin of admins) {
