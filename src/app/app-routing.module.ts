@@ -16,8 +16,7 @@ import { PermissionGroupsComponent } from './views/dashboard/permission-groups/p
 import { UserPageComponent } from './views/user-page/user-page.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [NoAuthGuard], },
-  { path: '', pathMatch: 'full', redirectTo: '/editor', },
+  { path: '', pathMatch: 'full', component: HomeComponent, canActivate: [NoAuthGuard], },
   { path: 'dashboard/groups', component: PermissionGroupsComponent, canActivate: [AuthGuard], },
   { path: 'chat', component: RoomsComponent, canActivate: [AuthGuard], },
   { path: 'chat/room/:id', component: RoomComponent, canActivate: [AuthGuard], },

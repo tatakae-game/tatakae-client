@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, CanDeactivate, Router } from '@angular/router';
+import {CanActivate, Router, UrlTree} from '@angular/router';
 
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NoAuthGuard implements CanActivate, CanDeactivate<unknown> {
+
+export class NoAuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) { }
 
-  canActivate(): Promise<boolean> {
-    return this.authService.isNotLogged();
-  }
-
-  canDeactivate(): Promise<boolean> {
-    return this.authService.isNotLogged();
+  async canActivate(): Promise<boolean | UrlTree> {
+    return await this.authService.isNotLogged() || this.router.parseUrl("/editor");
   }
 }
