@@ -14,7 +14,7 @@ import { RoomsComponent } from './views/rooms/rooms.component';
 import { PlayComponent } from './views/play/play.component';
 import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
 import { UserPageComponent } from './views/user-page/user-page.component';
-import {AdminGuard} from "./admin.guard";
+import { AdminGuard } from "./admin.guard";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: HomeComponent, canActivate: [NoAuthGuard], },
