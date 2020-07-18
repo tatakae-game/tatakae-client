@@ -24,6 +24,30 @@ export class UsersService {
     }
   }
 
+  async getAdministrators() {
+    try {
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/users/admins`).toPromise();
+      return res.users
+    } catch {
+      return null;
+    }
+  }
+
+  async isAdmin(): Promise<boolean> {
+    const me = await this.getMe();
+    const admins = await this.getAdministrators();
+
+    let isAdmin = false;
+
+    for (const admin of admins) {
+      if (admin.username === me.username) {
+        isAdmin = true;
+        break;
+      }
+    }
+    return isAdmin;
+  }
+
   async searchUsers(username: string) {
     try {
       const res = await this.http.get<ApiResponse>(`${config.api_url}/users/search?username=${username}`).toPromise();

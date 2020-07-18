@@ -17,7 +17,7 @@
             <li>
                 <a [ngClass]="router.url === '/user' ? 'active' : ''" routerLink="/user">Me</a>
             </li>
-            <li>
+            <li *ngIf="isAdmin">
                 <a routerLink="/dashboard/groups">Dashboard</a>
             </li>
             <li>
