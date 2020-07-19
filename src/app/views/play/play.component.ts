@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WsService } from 'src/app/ws.service';
+import { UsersService } from 'src/app/services/users.service';
+import { CodeFile } from 'src/app/models/code_file.model';
+import { GameComponent } from 'src/app/game/game.component';
 
 @Component({
   selector: 'app-play',
@@ -7,18 +10,20 @@ import { WsService } from 'src/app/ws.service';
   styleUrls: ['./play.component.scss']
 })
 export class PlayComponent implements OnInit {
+  @ViewChild(GameComponent)
+  game: GameComponent;
 
-  constructor(private wsService :WsService) { }
+  constructor(private wsService: WsService, private userService: UsersService) { }
 
-  ngOnInit(): void {
-    const socket = this.wsService.connect('/matchmaking')
-    socket.on('match found', (data) => {
-      console.log(data)
-    })
+  async ngOnInit() {
+    const language = await this.userService.getRunningLanguage();
+    const files = await this.userService.getUserCode(language);
 
-    socket.on('round actions', (data) => {
-      console.log(data)
-    })
+    this.launch(language, files);
+  }
+
+  launch(language: string, files: [CodeFile]) {
+    this.game.run(files, language, "false");
   }
 
 }
