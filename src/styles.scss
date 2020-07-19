@@ -131,20 +131,17 @@ button:not(.default-style),
 
   display: inline-block;
 
-  background: #ca792b;
-  background: -webkit-linear-gradient(135deg, #ca792b, #811d17);
-  background: linear-gradient(135deg, #ca792b, #811d17);
+  background: #811d17;
   color: inherit;
 
-  border-radius: 3px;
-  padding: 5px 16px;
+  border-radius: 2px;
+  padding: 8px 16px;
 
   transition: all 0.2s;
 
   &:hover {
     cursor: pointer;
-
-    transform: scale(1.05);
+    background: #9e3c1e;
   }
 }
 

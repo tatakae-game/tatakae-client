@@ -31,7 +31,10 @@
           [(ngModel)]="code">
         </ngx-monaco-editor>
       </div>
+    </div>
 
+    <div>
+      <app-game></app-game>
       <div class="action-container">
         <button (click)="testCode()">Test code</button>
         <button (click)="saveCode()">Save</button>
@@ -39,7 +42,5 @@
         <button (click)="deleteFile()">Delete File</button>
       </div>
     </div>
-
-    <app-game></app-game>
   </main>
 </app-user-control>
