@@ -5,4 +5,6 @@ export interface User {
     created?: Date;
     running_language: string;
     robot: string;
+    score: Number;
+    win_ratio: Object;
 }
