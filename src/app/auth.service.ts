@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('session');
+    localStorage.clear()
   }
 
   async lazy_load_session(token) {
