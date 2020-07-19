@@ -24,6 +24,15 @@ export class UsersService {
     }
   }
 
+  async getAllUsers() {
+    try {
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/users`).toPromise();
+      return res.users
+    } catch {
+      return null;
+    }
+  }
+
   async getAdministrators() {
     try {
       const res = await this.http.get<ApiResponse>(`${config.api_url}/users/admins`).toPromise();

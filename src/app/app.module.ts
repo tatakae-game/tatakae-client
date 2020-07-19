@@ -34,7 +34,8 @@ import { MaterialModule } from './modules/material.module';
 import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-groups-dialog/permissions-groups-dialog.component';
 import { UserPageComponent } from './views/user-page/user-page.component';
 import { MatSelectModule } from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input'; 
+import {MatInputModule} from '@angular/material/input';
+import { UserGroupsComponent } from './views/dashboard/user-groups/user-groups.component'; 
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,10 +50,12 @@ import {MatInputModule} from '@angular/material/input';
     UserControlComponent,
     RoomsComponent,
     PlayComponent,
+    UserGroupsComponent,
     DashboardAdminComponent,
     PermissionGroupsComponent,
     PermissionsGroupDialogComponent,
     UserPageComponent,
+    UserGroupsComponent,
   ],
   imports: [
     BrowserModule,

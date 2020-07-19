@@ -15,10 +15,12 @@ import { PlayComponent } from './views/play/play.component';
 import { PermissionGroupsComponent } from './views/dashboard/permission-groups/permission-groups.component';
 import { UserPageComponent } from './views/user-page/user-page.component';
 import { AdminGuard } from "./admin.guard";
+import { UserGroupsComponent } from './views/dashboard/user-groups/user-groups.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: HomeComponent, canActivate: [NoAuthGuard], },
   { path: 'dashboard/groups', component: PermissionGroupsComponent, canActivate: [AdminGuard], },
+  { path: 'dashboard/user-groups', component: UserGroupsComponent, canActivate: [AdminGuard], },
   { path: 'chat', component: RoomsComponent, canActivate: [AuthGuard], },
   { path: 'chat/room/:id', component: RoomComponent, canActivate: [AuthGuard], },
   { path: 'support', component: RoomsComponent, canActivate: [AuthGuard], },
