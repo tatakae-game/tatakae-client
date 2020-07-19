@@ -2,27 +2,35 @@
   <app-header></app-header>
   <main class="editor">
     <div class="monaco-container">
+      <div class="file-class">
+        <button class="default-style" [class]="this.language === 'js' ? 'active' : ''"
+          (click)="getCode('js')">JavaScript</button>
+        <button class="default-style" [class]="this.language === 'san' ? 'active' : ''"
+          (click)="getCode('san')">SAN</button>
+      </div>
 
+      <br>
 
-      <ul class="files_container">
-        <mat-button-toggle-group class="files_container">
-          <mat-button-toggle value="bold" (click)="getCode('js')">JS</mat-button-toggle>
-          <mat-button-toggle value="italic" (click)="getCode('san')">SAN</mat-button-toggle>
-        </mat-button-toggle-group>
+      <ul class="files-container" [style]="safeStyle(this.files_container_style)">
         <li *ngFor="let file of files; let i = index;" (click)="switchCode(file)" (dblclick)="file.changeText=true"
-          (keyup.enter)="file.changeText=false" (keyup.escape)="file.changeText=false" [ngClass]="'file-class'">
+          (keyup.enter)="file.changeText=false" (keyup.escape)="file.changeText=false" class="file-class"
+          [class]="this.displayed === file ? 'active' : ''">
           <input *ngIf="file.changeText===true" type="text" value="{{file.name}}" (keyup)="renameFile(file, $event)"
             focus="true">
-          <button mat-raised-button [class]="file.is_entrypoint? 'entrypoint' : 'file'" *ngIf="file.changeText===false"
-            (keyup)="renameFile(file, $event)">{{file.name}}</button>
+          <button [class]="['default-style', (file.is_entrypoint? 'entrypoint' : 'file')].join(' ')"
+            *ngIf="file.changeText===false" (keyup)="renameFile(file, $event)">{{file.name}}</button>
         </li>
+
         <li (click)="addFile()" class="file-class">
-          <button mate-raised-button>+</button>
+          <button class="default-style">+</button>
         </li>
       </ul>
 
-      <ngx-monaco-editor class="monaco-editor" (keyup)="storeInCache()" [options]="editorOptions" [(ngModel)]="code">
-      </ngx-monaco-editor>
+      <div #editor style="height: inherit;">
+        <ngx-monaco-editor class="monaco-editor" width="100%" (keyup)="storeInCache()" [options]="editorOptions"
+          [(ngModel)]="code">
+        </ngx-monaco-editor>
+      </div>
 
       <div class="action-container">
         <button (click)="testCode()">Test code</button>
@@ -30,10 +38,7 @@
         <button (click)="setEntrypoint()">Set file as entrypoint</button>
         <button (click)="deleteFile()">Delete File</button>
       </div>
-
-
     </div>
-
 
     <app-game></app-game>
   </main>

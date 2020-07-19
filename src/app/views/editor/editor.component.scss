@@ -21,7 +21,14 @@
       }
     }
 
-    .files_container {
+    .files-container {
+      margin: 0;
+      padding: 0;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      white-space: nowrap;
+      width: 100px;
+
       .file-class {
         display: inline-block;
       }
@@ -31,6 +38,43 @@
         box-shadow: 0 5px gray;
         transform: translateY(2px);
       }
+    }
+  }
+
+  .file-class {
+    &:nth-child(n + 2) {
+      border-left: solid #252525 1px;
+    }
+
+    &.active {
+      button,
+      input {
+        background-color: #202020;
+      }
+    }
+
+    button,
+    input {
+      &.active {
+        background-color: #202020;
+      }
+
+      background-color: #2f2f2f;
+      border: 0;
+      color: #d4d4d4;
+      padding: 10px 5px;
+      min-width: 35px;
+    }
+
+    button {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    input {
+      outline: none;
+      border-bottom: solid #fff 1px;
     }
   }
 }

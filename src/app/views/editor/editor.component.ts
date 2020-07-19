@@ -1,9 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ElementRef } from '@angular/core';
 
 import { GameComponent } from 'src/app/game/game.component';
 import { UsersService } from 'src/app/services/users.service';
 import { CodeFile, GenerateCodeFile } from 'src/app/models/code_file.model';
 import { NotifierService } from 'angular-notifier';
+import { DomSanitizer } from '@angular/platform-browser';
+
+const languages = {
+  'js': 'js',
+  'san': 'sn',
+}
 
 @Component({
   selector: 'app-editor',
@@ -22,21 +28,43 @@ export class EditorComponent implements OnInit {
   modifiedName: string;
   language: string;
   code: string;
-  public files: CodeFile[];
-  public displayed: CodeFile
 
-  constructor(private userService: UsersService, private notifierService: NotifierService) { }
+  public files: CodeFile[];
+  public displayed: CodeFile;
+
+  @ViewChild('editor')
+  editor: ElementRef;
+
+  public files_container_style = "width: 0px;";
+
+  constructor(private sanitizer: DomSanitizer, private userService: UsersService, private notifierService: NotifierService) { }
 
   async ngOnInit() {
     this.language = await this.userService.getRunningLanguage();
     this.instantiate_code(this.language)
   }
 
+  ngAfterViewInit() {
+    console.log(this.editor.nativeElement)
+    this.files_container_style = `width: ${(this.editor.nativeElement as HTMLElement).offsetWidth}px;`
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.files_container_style = `width: ${(this.editor.nativeElement as HTMLElement).offsetWidth}px;`
+  }
+
+  safeStyle(style) {
+    return this.sanitizer.bypassSecurityTrustStyle(style);
+  }
+
   async instantiate_code(language: string) {
     this.files = await this.userService.getUserCode(this.language);
+
     if (this.files === null) {
       this.files = [GenerateCodeFile()];
     }
+
     this.files.forEach(file => file.changeText = false)
     const entrypoint = this.files.filter(file => file.is_entrypoint)[0];
     this.displayed = entrypoint;
@@ -61,7 +89,7 @@ export class EditorComponent implements OnInit {
     if (res) {
       localStorage.removeItem(`${this.language}_code`)
     }
-    
+
     this.notifierService.notify((res.success === true ? 'success' : 'error'), res.errors[0]);
   }
 
@@ -89,7 +117,7 @@ export class EditorComponent implements OnInit {
       number++
     }
 
-    new_file.name = `file${number}.${this.language}`;
+    new_file.name = `file${number}.${languages[this.language]}`;
     this.files.push(new_file)
 
     this.displayed = new_file;
