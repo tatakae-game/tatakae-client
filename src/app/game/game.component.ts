@@ -269,13 +269,13 @@ export class GameComponent implements OnInit {
     const sprite = this.renderSprite(TILES['robot'], scale, x, y);
     sprite.zIndex = 10;
 
-    if (unit.orientation == 'up') {
+    if (unit.orientation === 'up') {
       sprite.angle = 0;
-    } else if (unit.orientation == 'right') {
+    } else if (unit.orientation === 'right') {
       sprite.angle = 90;
-    } else if (unit.orientation == 'down') {
+    } else if (unit.orientation === 'down') {
       sprite.angle = 180;
-    } else if (unit.orientation == 'left') {
+    } else if (unit.orientation === 'left') {
       sprite.angle = 270;
     }
 
@@ -305,8 +305,23 @@ export class GameComponent implements OnInit {
     return sprite;
   }
 
-  moveSprite(sprite: PIXI.AnimatedSprite, scale: number, x: number, y: number, is_jump: boolean = false) {
+  moveSprite(sprite: PIXI.AnimatedSprite, scale: number, x: number, y: number, is_jump: boolean = false, orientation = null) {
     return new Promise((resolve) => {
+      switch (orientation) {
+        case "up":
+          sprite.angle = 0;
+          break;
+        case "right":
+          sprite.angle = 90;
+          break;
+        case "down":
+          sprite.angle = 180;
+          break;
+        case "left":
+          sprite.angle = 270;
+          break;
+      }
+
       const destination = {
         x: (x + 0.5) * scale,
         y: (y + 0.5) * scale,
@@ -435,7 +450,11 @@ export class GameComponent implements OnInit {
 
   async handleActions(map: Tilemap, actions: Action[]) {
     for (const action of actions) {
+      console.log('doing', action.name, action)
       await this.handleAction(map, action);
+
+      await new Promise(resolve => this.app.ticker.addOnce(resolve));
+      await new Promise(resolve => this.app.ticker.addOnce(resolve));
     }
   }
 
@@ -471,7 +490,7 @@ export class GameComponent implements OnInit {
       }
 
       const scale = this.canvas_size / map.square_size;
-      await this.moveSprite(unit.sprite, scale, position.x, position.y);
+      await this.moveSprite(unit.sprite, scale, position.x, position.y, false, action.orientation);
     } else if (name == 'jump') {
       const { unit, position } = this.findUnit(map, action.robot_id);
 
@@ -491,21 +510,19 @@ export class GameComponent implements OnInit {
 
       switch (action.new_orientation) {
         case "up":
-          unit.sprite.angle = 270;
-          break;
-        case "right":
           unit.sprite.angle = 0;
           break;
-        case "down":
+        case "right":
           unit.sprite.angle = 90;
           break;
-        case "left":
+        case "down":
           unit.sprite.angle = 180;
+          break;
+        case "left":
+          unit.sprite.angle = 270;
           break;
       }
     }
-
-    await sleep(500)
   }
 
   async handleEvents(map: Tilemap, action: Action) {
