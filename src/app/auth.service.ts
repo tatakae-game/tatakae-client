@@ -54,7 +54,6 @@ export class AuthService {
 
   async lazy_load_session(token) {
     try {
-      console.log('try request')
       let me
       if(await this.isLogged()){
         me = await this.http.get<ApiResponse>(`${config.api_url}/users/me`).toPromise();
