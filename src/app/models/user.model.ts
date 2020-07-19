@@ -1,3 +1,9 @@
+interface Win_ratio {
+    games: Number;
+    wins: Number;
+    
+}
+
 export interface User {
     id: string;
     username: string;
@@ -6,5 +12,5 @@ export interface User {
     running_language: string;
     robot: string;
     score: Number;
-    win_ratio: Object;
+    win_ratio: Win_ratio;
 }
