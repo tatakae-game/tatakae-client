@@ -64,11 +64,14 @@ const TILES: { [key: string]: TileSettings } = {
 }
 
 interface Unit {
+  max_hp: number;
   hp: number;
   id: string;
   model: string;
   orientation: string;
+  container: PIXI.Container;
   sprite: PIXI.AnimatedSprite;
+  hp_text: PIXI.Text;
 }
 
 interface Layers {
@@ -267,7 +270,23 @@ export class GameComponent implements OnInit {
   spawnUnit(terrain: Tilemap, unit: Unit, x: number, y: number): Unit {
     const scale = this.canvas_size / terrain.square_size;
     const sprite = this.renderSprite(TILES['robot'], scale, x, y);
-    sprite.zIndex = 10;
+    sprite.anchor.set(0.5, 0.5);
+
+    sprite.x = 0.5;
+    sprite.y = 0.5;
+
+    const container = new PIXI.Container();
+    // container.pivot.set(0.5, 0.5);
+    container.x = (x + 0.5) * scale;
+    container.y = (y + 0.5) * scale;
+    container.zIndex = 10;
+
+    container.addChild(sprite);
+
+    const hp = new PIXI.Text(`${unit.hp} / ${unit.max_hp}`, { fontFamily: 'Arial', fontSize: 24, fill: 0xff1010, align: 'center' });
+    hp.anchor.set(0.5, 0.5);
+
+    container.addChild(hp);
 
     if (unit.orientation === 'up') {
       sprite.angle = 0;
@@ -279,9 +298,11 @@ export class GameComponent implements OnInit {
       sprite.angle = 270;
     }
 
-    this.app.stage.addChild(sprite);
+    this.app.stage.addChild(container);
 
+    unit.hp_text = hp;
     unit.sprite = sprite;
+    unit.container = container;
 
     return unit;
   }
@@ -305,20 +326,20 @@ export class GameComponent implements OnInit {
     return sprite;
   }
 
-  moveSprite(sprite: PIXI.AnimatedSprite, scale: number, x: number, y: number, is_jump: boolean = false, orientation = null) {
+  moveUnit(unit: Unit, scale: number, x: number, y: number, is_jump: boolean = false, orientation = null) {
     return new Promise((resolve) => {
       switch (orientation) {
         case "up":
-          sprite.angle = 0;
+          unit.sprite.angle = 0;
           break;
         case "right":
-          sprite.angle = 90;
+          unit.sprite.angle = 90;
           break;
         case "down":
-          sprite.angle = 180;
+          unit.sprite.angle = 180;
           break;
         case "left":
-          sprite.angle = 270;
+          unit.sprite.angle = 270;
           break;
       }
 
@@ -328,34 +349,34 @@ export class GameComponent implements OnInit {
       }
 
       // Shallow copy original scale
-      const original_scale = { x: sprite.scale.x, y: sprite.scale.y }
-      const distance = { x: Math.abs(sprite.x - destination.x), y: Math.abs(sprite.y - destination.y) }
+      const original_scale = { x: unit.sprite.scale.x, y: unit.sprite.scale.y }
+      const distance = { x: Math.abs(unit.container.x - destination.x), y: Math.abs(unit.container.y - destination.y) }
 
       const speed = 0.05 * scale;
 
       const event = (delta: number) => {
         const move = speed * delta
 
-        if (sprite.x > destination.x) {
-          sprite.x = Math.max(sprite.x - move, destination.x)
-        } else if (sprite.x < destination.x) {
-          sprite.x = Math.min(sprite.x + move, destination.x)
+        if (unit.container.x > destination.x) {
+          unit.container.x = Math.max(unit.container.x - move, destination.x)
+        } else if (unit.container.x < destination.x) {
+          unit.container.x = Math.min(unit.container.x + move, destination.x)
         }
 
-        if (sprite.y > destination.y) {
-          sprite.y = Math.max(sprite.y - move, destination.y)
-        } else if (sprite.y < destination.y) {
-          sprite.y = Math.min(sprite.y + move, destination.y)
+        if (unit.container.y > destination.y) {
+          unit.container.y = Math.max(unit.container.y - move, destination.y)
+        } else if (unit.container.y < destination.y) {
+          unit.container.y = Math.min(unit.container.y + move, destination.y)
         }
 
         if (is_jump) {
-          sprite.scale.x = original_scale.x + Math.abs(Math.abs((distance.x / 2) / scale - Math.abs(sprite.x - destination.x) / scale))
-          sprite.scale.y = original_scale.y + Math.abs(Math.abs((distance.y / 2) / scale - Math.abs(sprite.y - destination.y) / scale))
+          unit.sprite.scale.x = original_scale.x + Math.abs(Math.abs((distance.x / 2) / scale - Math.abs(unit.container.x - destination.x) / scale))
+          unit.sprite.scale.y = original_scale.y + Math.abs(Math.abs((distance.y / 2) / scale - Math.abs(unit.container.y - destination.y) / scale))
         }
 
-        if (sprite.x == destination.x && sprite.y == destination.y) {
-          sprite.scale.x = original_scale.x
-          sprite.scale.y = original_scale.y
+        if (unit.container.x == destination.x && unit.container.y == destination.y) {
+          unit.sprite.scale.x = original_scale.x
+          unit.sprite.scale.y = original_scale.y
 
           resolve();
           this.app.ticker.remove(event);
@@ -465,11 +486,14 @@ export class GameComponent implements OnInit {
 
     if (name == 'spawn') {
       const unit: Unit = {
+        max_hp: action.unit.hp,
         hp: action.unit.hp,
         id: action.unit.id,
         model: action.unit.model,
         orientation: action.unit.orientation,
         sprite: null,
+        container: null,
+        hp_text: null,
       }
 
       const { position } = action.unit
@@ -490,7 +514,7 @@ export class GameComponent implements OnInit {
       }
 
       const scale = this.canvas_size / map.square_size;
-      await this.moveSprite(unit.sprite, scale, position.x, position.y, false, action.orientation);
+      await this.moveUnit(unit, scale, position.x, position.y, false, action.orientation);
     } else if (name == 'jump') {
       const { unit, position } = this.findUnit(map, action.robot_id);
 
@@ -504,7 +528,7 @@ export class GameComponent implements OnInit {
       }
 
       const scale = this.canvas_size / map.square_size;
-      await this.moveSprite(unit.sprite, scale, position.x, position.y, true);
+      await this.moveUnit(unit, scale, position.x, position.y, true);
     } else if (name === 'turn-right' || name === 'turn-left') {
       const { unit } = this.findUnit(map, action.robot_id);
 
@@ -522,6 +546,11 @@ export class GameComponent implements OnInit {
           unit.sprite.angle = 270;
           break;
       }
+    } else if (name === "get-hit") {
+      const { unit } = this.findUnit(map, action.robot_id);
+
+      unit.hp -= action.damage;
+      unit.hp_text.text = `${unit.hp} / ${unit.max_hp}`;
     }
   }
 
