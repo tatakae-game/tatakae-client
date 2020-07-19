@@ -419,7 +419,7 @@ export class GameComponent implements OnInit {
     return textures[Math.floor(Math.random() * textures.length)];
   }
 
-  public async run(code: CodeFile[], language: string) {
+  public async run(code: CodeFile[], language: string, test: string) {
     if (this.socket) {
       this.socket.disconnect();
     }
@@ -427,7 +427,7 @@ export class GameComponent implements OnInit {
     await this.queue.clear();
 
     const prepared_code = this.wsService.prepare_data(code)
-    this.socket = this.wsService.connect('/matchmaking', { test: "true", code: prepared_code, language }, {
+    this.socket = this.wsService.connect('/matchmaking', { test, code: prepared_code, language }, {
       reconnection: false,
     })
 
