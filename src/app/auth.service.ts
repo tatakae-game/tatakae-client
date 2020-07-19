@@ -60,7 +60,6 @@ export class AuthService {
       } else {
         me = await this.http.get<ApiResponse>(`${config.api_url}/users/me?token=${token}`).toPromise();
       }
-      console.log(me)
 
       if (me?.success) {
         const session = JSON.stringify({
