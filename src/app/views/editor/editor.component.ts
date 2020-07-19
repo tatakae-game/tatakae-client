@@ -79,7 +79,7 @@ export class EditorComponent implements OnInit {
 
   testCode() {
     this.displayed.code = this.code;
-    this.game.run(this.files, this.language, "test");
+    this.game.run(this.files, this.language, "true");
   }
 
   async saveCode() {
