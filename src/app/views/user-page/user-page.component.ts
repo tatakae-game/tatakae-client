@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users.service';
 import { User } from 'src/app/models/user.model';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/auth.service';
 
 @Component({
   selector: 'app-user-page',
@@ -15,7 +16,7 @@ export class UserPageComponent implements OnInit {
   newPassword: FormControl;
   password: FormControl;
 
-  constructor(private userService: UsersService, private formBuilder: FormBuilder) {
+  constructor(private userService: UsersService, private formBuilder: FormBuilder, private authService: AuthService) {
     this.changePasswordForm = this.formBuilder.group({
       newPassword: ['', Validators.required],
       password: ['', Validators.required],
@@ -24,7 +25,8 @@ export class UserPageComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.user = await this.userService.getMe()
+    await this.authService.lazy_load_session(this.authService.session().token);
+    this.user = await this.userService.getMe();
   }
 
   update_default_language(selected_language: string) {
