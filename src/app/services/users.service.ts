@@ -24,6 +24,30 @@ export class UsersService {
     }
   }
 
+
+
+  async updateUserGroups(groups: string[], userId) {
+    try {
+      console.log(`${config.api_url}/users/groups/${userId}`)
+      const res = await this.http.put<ApiResponse>(`${config.api_url}/users/groups/${userId}`, {
+        groups
+      }).toPromise();
+
+      return res
+    } catch {
+      return null;
+    }
+  }
+
+  async getAllUsers() {
+    try {
+      const res = await this.http.get<ApiResponse>(`${config.api_url}/users`).toPromise();
+      return res.users
+    } catch {
+      return null;
+    }
+  }
+
   async getAdministrators() {
     try {
       const res = await this.http.get<ApiResponse>(`${config.api_url}/users/admins`).toPromise();

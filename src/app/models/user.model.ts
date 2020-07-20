@@ -13,4 +13,5 @@ export interface User {
     robot: string;
     score: Number;
     win_ratio: Win_ratio;
+    groups: string[];
 }
