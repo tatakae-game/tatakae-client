@@ -88,6 +88,11 @@ export class RoomsComponent implements OnInit {
     try {
       const guest = this.searchedUsers.find(user => user.username === data.guest)
 
+      if (!guest) {
+        this.notifierService.notify('warning', `User "${data.guest}" doesn't exists.`);
+        return;
+      }
+
       const response = await this.roomService.createRoom(data.name, guest.id);
       if (response.success) {
         this.notifierService.notify('success', 'Room successfuly created.');
