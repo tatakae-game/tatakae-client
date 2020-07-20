@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { WsService } from '../ws.service';
 import { CodeFile } from '../models/code_file.model';
 import { NotifierService } from 'angular-notifier';
+import { UsersService } from '../services/users.service';
 
 enum TileType {
   Floor,
@@ -184,7 +185,7 @@ export class GameComponent implements OnInit {
 
   private queue: AnimationQueue = new AnimationQueue();
 
-  constructor(private wsService: WsService, private elementRef: ElementRef, private ngZone: NgZone, private notificationService: NotifierService) { }
+  constructor(private wsService: WsService, private elementRef: ElementRef, private ngZone: NgZone, private notificationService: NotifierService, private userService: UsersService) { }
 
   ngOnInit(): void {
     this.ngZone.runOutsideAngular(() => {
@@ -471,12 +472,17 @@ export class GameComponent implements OnInit {
     });
 
     this.socket.on('end game', (data) => {
-      
+      this.displayWinner(data.winners)
     });
   }
 
-  displayWinner (winners) {
-    console.log(winners)
+  async displayWinner (winners) {
+    const user_id = (await this.userService.getMe()).id
+    if (winners.includes(user_id)) {
+      this.notificationService.notify('success', 'Congratulation ! You won !');
+    } else {
+      this.notificationService.notify('error', 'Sadly, you losed won !');
+    }
   }
 
   async handleActions(map: Tilemap, actions: Action[]) {
