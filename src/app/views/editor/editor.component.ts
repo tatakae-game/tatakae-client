@@ -79,7 +79,7 @@ export class EditorComponent implements OnInit {
 
   testCode() {
     this.displayed.code = this.code;
-    this.game.run(this.files, this.language, "test");
+    this.game.run(this.files, this.language, "true");
   }
 
   async saveCode() {
@@ -129,7 +129,7 @@ export class EditorComponent implements OnInit {
 
   deleteFile() {
     if (this.files.length <= 1) {
-      return console.log(`can't delete last file`)
+      return this.notifierService.notify('error', 'You cannot delete the last file');
     }
 
     this.files = this.files.filter(file => file !== this.displayed)

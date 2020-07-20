@@ -75,7 +75,7 @@ export class RoomsComponent implements OnInit {
       const success = await this.roomService.createTicket(data.name);
       if (success) {
         this.notifierService.notify('success', 'Ticket successfuly created.');
-        this.getTickets();
+        await this.getTickets();
       } else {
         this.notifierService.notify('error', 'An error occured while creating a new ticket.');
       }
@@ -88,10 +88,15 @@ export class RoomsComponent implements OnInit {
     try {
       const guest = this.searchedUsers.find(user => user.username === data.guest)
 
+      if (!guest) {
+        this.notifierService.notify('warning', `User "${data.guest}" doesn't exists.`);
+        return;
+      }
+
       const response = await this.roomService.createRoom(data.name, guest.id);
       if (response.success) {
         this.notifierService.notify('success', 'Room successfuly created.');
-        this.getRooms();
+        await this.getRooms();
       } else {
         this.notifierService.notify('error', 'An error occured while creating a new chat room.');
       }
