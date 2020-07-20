@@ -32,9 +32,6 @@ export class EditorComponent implements OnInit {
   public files: CodeFile[];
   public displayed: CodeFile;
 
-  @ViewChild('editor')
-  editor: ElementRef;
-
   public files_container_style = "width: 0px;";
 
   constructor(private sanitizer: DomSanitizer, private userService: UsersService, private notifierService: NotifierService) { }
@@ -42,20 +39,6 @@ export class EditorComponent implements OnInit {
   async ngOnInit() {
     this.language = await this.userService.getRunningLanguage();
     this.instantiate_code(this.language)
-  }
-
-  ngAfterViewInit() {
-    console.log(this.editor.nativeElement)
-    this.files_container_style = `width: ${(this.editor.nativeElement as HTMLElement).offsetWidth}px;`
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    this.files_container_style = `width: ${(this.editor.nativeElement as HTMLElement).offsetWidth}px;`
-  }
-
-  safeStyle(style) {
-    return this.sanitizer.bypassSecurityTrustStyle(style);
   }
 
   async instantiate_code(language: string) {
@@ -152,13 +135,7 @@ export class EditorComponent implements OnInit {
     this.storeInCache();
   }
 
-  async getCode(language: string) {
-    if (this.language === language) {
-      return
-    }
-
-    this.language = language
-
-    this.instantiate_code(language)
+  async getCode() {
+    this.instantiate_code(this.language)
   }
 }

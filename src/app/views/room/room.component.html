@@ -1,6 +1,53 @@
 <app-user-control padding="false">
-    <app-header></app-header>
-    <main>
+    <!-- <app-header></app-header> -->
+
+    <div class="room">
+        <div #chat class="chat-messages">
+            <div *ngFor="let message of messages"
+                class="chat-message {{ message.author === session.user.id ? 'chat-message-by-author' : '' }}">
+                <div tooltip="{{ sanitizeDate(message.date) }}"
+                    placement="{{ message.author === session.user.id ? 'left' : 'right' }}" show-delay="0">
+                    <div *ngIf="message.author !== session.user.id" class="chat-message-author">
+                        {{ getUsername(message.author) }}
+                    </div>
+                    <div *ngIf="message.type == 'text'">{{message.data}}</div>
+                </div>
+            </div>
+        </div>
+
+        <form nz-form style="display: flex;" [formGroup]="messageForm" (ngSubmit)="onMessageSubmit(messageForm.value)">
+            <input nz-input name="message" type="text" id="message" formControlName="message">
+            <button nz-button [nzType]="'primary'" type="submit" [disabled]="!messageForm.valid">
+                <fa-icon [icon]="sendIcon"></fa-icon>
+            </button>
+        </form>
+    </div>
+
+    <nz-sider>Sider</nz-sider>
+    <div class="chat-users-list">
+        <div class="chat-users-list-name">{{ room?.name }}</div>
+        <div *ngIf="isSupportPage else invite" class="close-ticket">
+            <button (click)="closeTicket()">Close ticket</button>
+        </div>
+        <ng-template #invite>
+            <form class="form-entry chat-input-form chat-invite-form" [formGroup]="inviteForm"
+                (ngSubmit)="onInviteSubmit(inviteForm.value)">
+                <input list="users" formControlName="user" required (keyup)="onInviteUserUpdate($event)">
+                <datalist id="users">
+                    <option *ngFor="let user of searchedUsers" value="{{ user.username }}">{{user.username}}</option>
+                </datalist>
+                <button type="submit" [disabled]="!inviteForm.valid">
+                    <fa-icon [icon]="inviteIcon"></fa-icon>
+                </button>
+            </form>
+            
+        </ng-template>
+        <div *ngFor="let user of users" class="chat-users-list-users">
+            {{ user.username }}
+        </div>
+    </div>
+
+    <!-- <main>
         <div #chat class="chat-messages">
             <div *ngFor="let message of messages"
                 class="chat-message {{ message.author === session.user.id ? 'chat-message-by-author' : '' }}">
@@ -45,5 +92,5 @@
         <div *ngFor="let user of users" class="chat-users-list-users">
             {{ user.username }}
         </div>
-    </div>
+    </div> -->
 </app-user-control>

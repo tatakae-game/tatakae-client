@@ -1,6 +1,39 @@
 <app-user-control>
-    <app-header></app-header>
-    <main>
+    <!-- <app-header></app-header> -->
+
+    <div *ngIf="isSupportPage; else addNewRoom">
+        <form nz-form [formGroup]="newTicketForm" (ngSubmit)="onTicketSubmit(newTicketForm.value)">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6" nzFor="ticket-name">Ticket name</nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                    <input nz-input name="ticket-name" type="text" id="ticket-name" formControlName="name">
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </div>
+
+    <ng-template #addNewRoom>
+        <form nz-form [formGroup]="newRoomForm" (ngSubmit)="onRoomSubmit(newRoomForm.value)">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6" nzFor="room-name">Room name</nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                    <input nz-input name="room-name" type="text" id="room-name" formControlName="name">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6" nzFor="guest-name">Guest name</nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                    <input nz-input name="guest-name" type="text" id="guest-name" formControlName="guest"
+                        (input)="onGuestInput($event)" [nzAutocomplete]="auto" />
+                    <nz-autocomplete [nzDataSource]="searchedGuestUsers" nzBackfill #auto></nz-autocomplete>
+                </nz-form-control>
+            </nz-form-item>
+
+            <button nz-button [nzType]="'primary'" [disabled]="!newRoomForm.valid">Submit</button>
+        </form>
+    </ng-template>
+
+    <!-- <main>
         <div *ngIf="isSupportPage; else addNewRoom">
             <form [formGroup]="newTicketForm" (ngSubmit)="onTicketSubmit(newTicketForm.value)">
                 <div class="form-entry">
@@ -50,5 +83,13 @@
             <div class="chat-room-name">{{ room.name }}</div>
             <div>{{ room.users.length }} users</div>
         </a>
-    </main>
+    </main> -->
+
+    <nz-list nzItemLayout="horizontal">
+        <nz-list-item *ngFor="let room of rooms" routerLink="{{ redirectToUrl }}/{{ room.id }}" class="chat-room"
+            [ngClass]="isSupportPage ? 'ticket-color' : 'room-color'">
+            <div class="chat-room-name">{{ room.name }}</div>
+            <div>{{ room.users.length }} users</div>
+        </nz-list-item>
+    </nz-list>
 </app-user-control>

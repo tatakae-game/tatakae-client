@@ -23,6 +23,9 @@ export class RoomsComponent implements OnInit {
   redirectToUrl: string;
   searchedUsers: User[] = [];
   session: Session;
+
+  searchedGuestUsers: string[] = [];
+
   constructor(private roomService: RoomsService,
     private router: Router,
     private formBuilder: FormBuilder,
@@ -86,6 +89,8 @@ export class RoomsComponent implements OnInit {
 
   async onRoomSubmit(data: any) {
     try {
+      console.log(this.searchedGuestUsers)
+      console.log(data.guest)
       const guest = this.searchedUsers.find(user => user.username === data.guest)
 
       if (!guest) {
@@ -103,6 +108,12 @@ export class RoomsComponent implements OnInit {
     } catch (error) {
       this.notifierService.notify('error', error.message);
     }
+  }
+
+  async onGuestInput(event: Event) {
+    const users = await this.usersService.searchUsers((event.target as HTMLInputElement).value);
+    this.searchedUsers = users.filter(user => user.username !== this.session.user.username);
+    this.searchedGuestUsers = this.searchedUsers.map(user => user.username);
   }
 
   async onGuestUpdate(event: any) {

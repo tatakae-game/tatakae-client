@@ -1,3 +1,17 @@
-<div class="user-control {{this.padding ? 'no-padding' : ''}}">
-  <ng-content></ng-content>
-</div>
+<nz-layout>
+  <nz-layout>
+    <nz-sider nzWidth="200px" nzTheme="light">
+      <ul nz-menu nzMode="inline" class="sider-menu">
+        <li nz-menu-item nzSelected>option1</li>
+        <li nz-menu-item>option2</li>
+        <li nz-menu-item>option3</li>
+        <li nz-menu-item>option4</li>
+      </ul>
+    </nz-sider>
+    <nz-layout class="inner-layout">
+      <nz-content>
+        <ng-content></ng-content>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</nz-layout>
