@@ -18,10 +18,9 @@ export class UserGroupsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   users: MatTableDataSource<User>;
+  displayedColumns: string[];
   groups: Group[];
-  groupsList: string[];
-  groupSelector: FormControl;
-  usersList: FormGroup[];
+  groupsName: string[];
   selectedGroups: any[];
 
   constructor(
@@ -33,23 +32,68 @@ export class UserGroupsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const res = await this.groupsService.getAllGroups();
-    this.groups = res.groups;
-    
+    await this.initDisplayedColumns();
+    await this.getUsers();
   }
 
-  saveGroups(user_id: string, value) {
-    console.log(user_id);
-    console.log(value);
+  async initDisplayedColumns(): Promise<void> {
+    try {
+      this.groups = (await this.groupsService.getAllGroups()).groups;
+      this.groupsName = this.groups.map(group => group.name.toLowerCase())
+      console.log(this.groupsName)
+      if (this.groupsName.length) {
+        this.displayedColumns = ['user'].concat(this.groupsName);
+        console.log(this.displayedColumns)
+      } else {
+        this.notifierService.notify('error', 'Any permission has been set');
+      }
+
+    } catch (error) {
+      this.notifierService.notify('error', error.message);
+    }
   }
 
   async getUsers() {
     try {
       const response = await this.userService.getAllUsers();
       this.users = new MatTableDataSource<User>(response);
+      console.log(this.users);
       this.users.paginator = this.paginator;
     } catch (error) {
       this.notifierService.notify('error', error.message);
+    }
+  }
+
+  async updateGroup(user: User, group: string) {
+    try {
+      const groups = user.groups
+      const groupId = this.getGroupByName(group)._id;
+      if (groups.includes(groupId)) {
+        groups.splice(groups.indexOf(groupId), 1);
+      } else {
+        groups.push(groupId)
+      }
+      
+      const res = await this.userService.updateUserGroups(groups, user.id);
+      console.log(res);
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
+
+  getCheckedValue(groupId: string, user: User) {
+    return user.groups.includes(groupId);
+  }
+
+  getGroupByName(groupName: string) {
+    return this.groups.find(group => group.name.toLowerCase() === groupName)
+  }
+
+  getUserGroupByName(groupName: string, user: User) {
+    return {
+      groupName,
+      checked: this.getCheckedValue(this.getGroupByName(groupName)._id, user),
     }
   }
 
