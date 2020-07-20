@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, NgZone } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import { WsService } from '../ws.service';
 import { CodeFile } from '../models/code_file.model';
+import { NotifierService } from 'angular-notifier';
 
 enum TileType {
   Floor,
@@ -183,7 +184,7 @@ export class GameComponent implements OnInit {
 
   private queue: AnimationQueue = new AnimationQueue();
 
-  constructor(private wsService: WsService, private elementRef: ElementRef, private ngZone: NgZone) { }
+  constructor(private wsService: WsService, private elementRef: ElementRef, private ngZone: NgZone, private notificationService: NotifierService) { }
 
   ngOnInit(): void {
     this.ngZone.runOutsideAngular(() => {
@@ -453,7 +454,7 @@ export class GameComponent implements OnInit {
     });
 
     this.socket.on('err', (data) => {
-      console.log(data.error)
+      this.notificationService.notify('error', data.error)
     })
 
     this.socket.on('round actions', (data) => {
