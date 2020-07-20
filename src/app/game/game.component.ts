@@ -466,13 +466,22 @@ export class GameComponent implements OnInit {
     });
 
     this.socket.on('end test phase', (data) => {
-      console.log("test ended")
+      console.log(data)
+      this.notificationService.notify("success", `Test ended\nPlayer hp: ${data.robots[0].hp}\nOpponent hp: ${data.robots[1].hp}`)
     });
+
+    this.socket.on('end game', (data) => {
+      
+    });
+  }
+
+  displayWinner (winners) {
+    console.log(winners)
   }
 
   async handleActions(map: Tilemap, actions: Action[]) {
     for (const action of actions) {
-      console.log('doing', action.name, action)
+      // console.log('doing', action.name, action)
       await this.handleAction(map, action);
 
       await new Promise(resolve => this.app.ticker.addOnce(resolve));
