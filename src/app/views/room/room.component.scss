@@ -14,6 +14,7 @@ main {
 .chat-message {
   padding: 3px 30px;
   display: flex;
+  word-break: break-all;
 
   > div {
     color: #080808;
@@ -86,7 +87,7 @@ main {
   text-align: center;
   padding: 10px 0;
 
-  transition: all .2s;
+  transition: all 0.2s;
 
   user-select: none;
 
