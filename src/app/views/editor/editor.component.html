@@ -27,8 +27,8 @@
       </ul>
 
       <div #editor style="height: inherit;">
-        <ngx-monaco-editor class="monaco-editor" width="100%" (keyup)="storeInCache()" [options]="editorOptions"
-          [(ngModel)]="code">
+        <ngx-monaco-editor class="monaco-editor" width="100%" (keyup)="storeInCache()"
+          [options]="this.language == 'js' ? editorOptions : editorOptions2 " [(ngModel)]="code">
         </ngx-monaco-editor>
       </div>
     </div>

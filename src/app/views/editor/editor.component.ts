@@ -22,6 +22,11 @@ export class EditorComponent implements OnInit {
     language: 'javascript',
   };
 
+  editorOptions2 = {
+    theme: 'vs-dark',
+    language: 'none',
+  };
+
   @ViewChild(GameComponent)
   game: GameComponent;
 
