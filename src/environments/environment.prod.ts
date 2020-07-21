@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  api_url : "PROD API URL",
+  api_url : "https://api.tatakae.qtmsheep.com",
 };

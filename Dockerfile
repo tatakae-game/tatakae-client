@@ -1,13 +1,16 @@
-FROM node:12
+FROM node:14.5-alpine AS build
 
-WORKDIR /app/client
+WORKDIR /usr/src/app
 
-ENV PATH /app/node_modules/.bin:$PATH
+COPY package*.json ./
 
-COPY package.json .
 RUN npm i
 
 COPY . .
 
-EXPOSE 4200
-CMD npm start -- --host 0.0.0.0
+RUN npm run prod
+
+FROM nginx:1.17.1-alpine
+
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /usr/src/app/dist/tatakae-client /usr/share/nginx/html
