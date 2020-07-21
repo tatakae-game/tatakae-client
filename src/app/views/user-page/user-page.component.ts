@@ -3,6 +3,7 @@ import { UsersService } from 'src/app/services/users.service';
 import { User } from 'src/app/models/user.model';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth.service';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-user-page',
@@ -16,7 +17,7 @@ export class UserPageComponent implements OnInit {
   newPassword: FormControl;
   password: FormControl;
 
-  constructor(private userService: UsersService, private formBuilder: FormBuilder, private authService: AuthService) {
+  constructor(private userService: UsersService, private formBuilder: FormBuilder, private authService: AuthService, private notifier: NotifierService) {
     this.changePasswordForm = this.formBuilder.group({
       newPassword: ['', Validators.required],
       password: ['', Validators.required],
@@ -35,6 +36,12 @@ export class UserPageComponent implements OnInit {
 
   async onSubmit(value: any) {
     const res = await this.userService.update_password(value.password, value.newPassword);
+
+    if (!res) {
+      this.notifier.notify("success", "password successfuly updated");
+    } else {
+      this.notifier.notify("error", res.toString());
+    }
   }
 
 }

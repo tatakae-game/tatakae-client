@@ -147,8 +147,9 @@ export class UsersService {
         password,
         new_password: newPassword,
       }).toPromise();
-      console.log(res)
 
+      console.log(res)
+      return res.errors;
     } catch {
       return 'an error occured';
     }
