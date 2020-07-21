@@ -35,7 +35,9 @@ import { PermissionsGroupDialogComponent } from './views/dialogs/permissions-gro
 import { UserPageComponent } from './views/user-page/user-page.component';
 import { MatSelectModule } from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
+import {MatMenuModule} from '@angular/material/menu';
 import { UserGroupsComponent } from './views/dashboard/user-groups/user-groups.component'; 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,6 +60,7 @@ import { UserGroupsComponent } from './views/dashboard/user-groups/user-groups.c
     UserGroupsComponent,
   ],
   imports: [
+    MatMenuModule,
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,

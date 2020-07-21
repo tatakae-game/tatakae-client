@@ -4,12 +4,25 @@
         <nav>
             <ul>
                 <li>
-                    <a [ngClass]="router.url === '/dashboard/groups' ? 'active' : ''" routerLink="/dashboard/groups">Permission Groups</a>
+                    <a [ngClass]="router.url === '/dashboard/groups' ? 'active' : ''"
+                        routerLink="/dashboard/groups">Permission Groups</a>
                 </li>
                 <li>
-                    <a [ngClass]="router.url === '/dashboard/user-groups' ? 'active' : ''" routerLink="/dashboard/user-groups">User Groups</a>
+                    <a [ngClass]="router.url === '/dashboard/user-groups' ? 'active' : ''"
+                        routerLink="/dashboard/user-groups">User Groups</a>
                 </li>
-                
+
+                <li style="padding-left: 1em;">
+                    <button mat-button [matMenuTriggerFor]="menu">Client Admin</button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item> <a href="../../assets/admin-client/starter-mac.jar">Mac Version</a></button>
+                        <button mat-menu-item><a href="../../assets/admin-client/starter-windows.jar">Windows Version</a></button>
+                        <button mat-menu-item><a href="../../assets/admin-client/starter-linux.jar">Linux Version</a></button>
+                    </mat-menu>
+                </li>
+
+
+
                 <hr>
 
                 <li>
