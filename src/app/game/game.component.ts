@@ -69,6 +69,7 @@ interface Unit {
   max_hp: number;
   hp: number;
   id: string;
+  username: string;
   model: string;
   orientation: string;
   container: PIXI.Container;
@@ -269,7 +270,7 @@ export class GameComponent implements OnInit {
     }
   }
 
-  spawnUnit(terrain: Tilemap, unit: Unit, x: number, y: number): Unit {
+  async spawnUnit(terrain: Tilemap, unit: Unit, x: number, y: number): Promise<Unit> {
     const scale = this.canvas_size / terrain.square_size;
     const sprite = this.renderSprite(TILES['robot'], scale, x, y);
     sprite.anchor.set(0.5, 0.5);
@@ -285,8 +286,16 @@ export class GameComponent implements OnInit {
 
     container.addChild(sprite);
 
-    const hp = new PIXI.Text(`${unit.hp} / ${unit.max_hp}`, { fontFamily: 'Arial', fontSize: 24, fill: 0xff1010, align: 'center' });
-    hp.anchor.set(0.5, 0.5);
+    const user = await this.userService.getMe();
+    const fill = unit.id === user.id ? 0x32cd32 : 0xff1010;
+
+    const username = new PIXI.Text(unit.username || unit.id, { fontFamily: 'Arial', fontSize: 24, fill, align: 'center' });
+    username.anchor.set(0.5, 1.25);
+
+    container.addChild(username);
+
+    const hp = new PIXI.Text(`${unit.hp} / ${unit.max_hp}`, { fontFamily: 'Arial', fontSize: 24, fill, align: 'center' });
+    hp.anchor.set(0.5, 0.25);
 
     container.addChild(hp);
 
@@ -446,7 +455,7 @@ export class GameComponent implements OnInit {
       this.queue.start();
     });
 
-    this.socket.on('spawn', (data) => {
+    this.socket.on('spawn', (data, players) => {
       console.log('spawn:', data)
 
       this.queue.add(async () => {
@@ -476,7 +485,7 @@ export class GameComponent implements OnInit {
     });
   }
 
-  async displayWinner (winners) {
+  async displayWinner(winners) {
     const user_id = (await this.userService.getMe()).id
     if (winners.includes(user_id)) {
       this.notificationService.notify('success', 'Congratulation ! You won !');
@@ -505,6 +514,7 @@ export class GameComponent implements OnInit {
         max_hp: action.unit.hp,
         hp: action.unit.hp,
         id: action.unit.id,
+        username: action.unit.username,
         model: action.unit.model,
         orientation: action.unit.orientation,
         sprite: null,
@@ -516,7 +526,7 @@ export class GameComponent implements OnInit {
 
       map.layers.units[position.x + (position.y * map.square_size)] = unit
 
-      this.spawnUnit(map, unit, position.x, position.y);
+      await this.spawnUnit(map, unit, position.x, position.y);
     } else if (name == 'walk') {
       const { unit, position } = this.findUnit(map, action.robot_id);
 
